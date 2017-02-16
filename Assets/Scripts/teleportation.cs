@@ -5,8 +5,7 @@ using UnityStandardAssets.Characters.ThirdPerson;
 
 public class teleportation : MonoBehaviour
 {
-    public Material phantomShader;
-    public Material normalShader;
+    public Material phantomMaterial;
     public GameObject Ambra;
     private float _teleportationSpeed = 5f;
     private List<GameObject> phantomList;
@@ -21,15 +20,21 @@ public class teleportation : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.F))
         {
-            GameObject phantom = Instantiate(Ambra, transform.position, transform.rotation);
-            phantom.GetComponentInChildren<Renderer>().material = phantomShader;
+            GameObject phantom = Instantiate(Ambra, transform.position, transform.rotation) as GameObject;
+            phantom.GetComponentInChildren<Renderer>().material = phantomMaterial;
             phantom.GetComponent<Animator>().Stop();
             phantom.GetComponent<ThirdPersonUserControl>().enabled = false;
             phantom.GetComponent<teleportation>().enabled = false;
             phantom.GetComponent<Rigidbody>().isKinematic = true;
             phantom.GetComponent<CapsuleCollider>().enabled = false;
-            Ambra.transform.Translate(Vector3.forward * _teleportationSpeed);
+            var velocity = Ambra.GetComponent<Rigidbody>().velocity;
+            Ambra.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * 20, ForceMode.VelocityChange);
+            Ambra.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * 2, ForceMode.VelocityChange);
             Destroy(phantom, 3);
         }
+    }
+    void OnCollisionEnter()
+    {
+        Ambra.GetComponent<Rigidbody>().velocity = Vector3.zero;
     }
 }
