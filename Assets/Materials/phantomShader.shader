@@ -34,10 +34,8 @@
 		fixed _RimWidth;
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
-			// Albedo comes from a texture tinted by color
 			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
 			o.Albedo = _Color;
-			// Metallic and smoothness come from slider variables
 			o.Normal = UnpackNormal(tex2D(_Bump, IN.uv_Bump));
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;

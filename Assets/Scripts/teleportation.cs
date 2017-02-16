@@ -9,10 +9,11 @@ public class teleportation : MonoBehaviour
     public Material normalShader;
     public GameObject Ambra;
     private float _teleportationSpeed = 5f;
+    private List<GameObject> phantomList;
+    private List<float> phantomTime;
     // Use this for initialization
     void Start()
     {
-
     }
 
     // Update is called once per frame
@@ -28,6 +29,7 @@ public class teleportation : MonoBehaviour
             phantom.GetComponent<Rigidbody>().isKinematic = true;
             phantom.GetComponent<CapsuleCollider>().enabled = false;
             Ambra.transform.Translate(Vector3.forward * _teleportationSpeed);
+            Destroy(phantom, 3);
         }
     }
 }
