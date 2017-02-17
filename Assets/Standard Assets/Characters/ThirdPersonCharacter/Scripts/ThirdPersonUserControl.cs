@@ -50,7 +50,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             float h = CrossPlatformInputManager.GetAxis("Horizontal");
             float v = CrossPlatformInputManager.GetAxis("Vertical");
             bool crouch = Input.GetKey(KeyCode.C);
-            if (v < 0) v = 0;
+            
             if (h > 0) h = Mathf.Abs(RotateSpeed);
             if (h < 0) h = -Mathf.Abs(RotateSpeed);
             m_Move = v*transform.forward + h* transform.right;

@@ -23,7 +23,6 @@ public class teleportation : MonoBehaviour
             GameObject phantom = Instantiate(Ambra, transform.position, transform.rotation) as GameObject;
             phantom.GetComponentInChildren<Renderer>().material = phantomMaterial;
             phantom.GetComponent<Animator>().Stop();
-            phantom.GetComponent<ThirdPersonUserControl>().enabled = false;
             phantom.GetComponent<teleportation>().enabled = false;
             phantom.GetComponent<Rigidbody>().isKinematic = true;
             phantom.GetComponent<CapsuleCollider>().enabled = false;
