@@ -35,6 +35,6 @@ public class teleportation : MonoBehaviour
     }
     void OnCollisionEnter()
     {
-        Ambra.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        //Ambra.GetComponent<Rigidbody>().velocity = Vector3.zero;
     }
 }
