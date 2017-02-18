@@ -25,10 +25,10 @@ public class teleportation : MonoBehaviour
             phantom.GetComponent<Animator>().Stop();
             phantom.GetComponent<teleportation>().enabled = false;
             phantom.GetComponent<Rigidbody>().isKinematic = true;
-            phantom.GetComponent<CapsuleCollider>().enabled = false;
-            var velocity = Ambra.GetComponent<Rigidbody>().velocity;
-            Ambra.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * 20, ForceMode.VelocityChange);
-            Ambra.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * 2, ForceMode.VelocityChange);
+            phantom.GetComponent<CharacterController>().enabled = false;
+            phantom.GetComponent<moveController>().enabled = false;
+            
+            Ambra.GetComponent<CharacterController>().Move(Ambra.transform.TransformDirection(new Vector3(0, 0, 10)));
             Destroy(phantom, 3);
         }
     }

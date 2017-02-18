@@ -11,15 +11,20 @@ public class moveController : MonoBehaviour {
     private bool _isGrounded;
     private Vector3 _moveNormal;
     private float _OrigGroundCheckDistance;
+    private CharacterController _characterContorller;
+    private float _JumpAmount;
 
     public float moveSpeed = 5.0f;
-    public float rotateSpeed = 5.0f;
-    public float _GroundCheckDistance = 0.1f;
+    public float rotateSpeed = 90.0f;
+    public float jumpPower = 10.0f;
+    public float groundCheckDistance = 0.15f;
+    public float gravity = 10.0f;
     // Use this for initialization
     void Start () {
         _animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
-        _OrigGroundCheckDistance = _GroundCheckDistance;
+        _OrigGroundCheckDistance = groundCheckDistance;
+        _characterContorller = GetComponent<CharacterController>();
     }
 	
 	// Update is called once per frame
@@ -27,15 +32,13 @@ public class moveController : MonoBehaviour {
         _forwardAmount = 0;
         _turnAmount = 0;
         _isGrounded = true;
-        //_rigidbody.velocity = Vector3.zero;
-		if(Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W))
         {
-            _animator.SetFloat("Forward", 5f);
-            GetComponent<CharacterController>().Move(new Vector3(0, 0, Time.deltaTime*5));
+            _forwardAmount = moveSpeed;
         }
         if(Input.GetKey(KeyCode.S))
         {
-            _forwardAmount = -moveSpeed;
+            _forwardAmount = -moveSpeed/2;
         }
         if (Input.GetKey(KeyCode.A))
         {
@@ -45,66 +48,70 @@ public class moveController : MonoBehaviour {
         {
             _turnAmount = rotateSpeed;
         }
-        //checkGrounded();
-        //updateAnimator();
-        //
-        //if(!_isGrounded)
-        //{
-        //    moveAtAir();
-        //}
-        //
-        //if(_forwardAmount < 0)
-        //{
-        //    moveBackAtGround();
-        //}
+        checkGrounded();
 
-
-
-
+        if (_isGrounded)
+        {
+            _JumpAmount = 0;
+            if (Input.GetKey(KeyCode.Space))
+            {
+                _JumpAmount += jumpPower;
+            }
+        }
+        else
+        {
+            _JumpAmount -= gravity * Time.deltaTime;
+        }
+        var move = new Vector3(0, _JumpAmount, _forwardAmount);
+        move = transform.TransformDirection(move);
+        if(move != Vector3.zero)
+        {
+            //_characterContorller.Move(move*Time.deltaTime);
+            GetComponent<Rigidbody>().AddForce(move*Time.deltaTime,ForceMode.VelocityChange);
+        }
+        updateAnimator();
+        rotateCharacter();
     }
-   // void updateAnimator()
-   // {
-   //     _animator.SetFloat("Forward", Mathf.Abs(_forwardAmount), 0.1f, Time.deltaTime);
-   //     _animator.SetBool("OnGround", _isGrounded);
-   //     if (!_isGrounded)
-   //     {
-   //         _animator.SetFloat("Jump", _rigidbody.velocity.y);
-   //     }
-   //
-   //   
-   //     float runCycle = Mathf.Repeat(_animator.GetCurrentAnimatorStateInfo(0).normalizedTime + 0.2f, 1);
-   //     float jumpLeg = (runCycle < 0.5 ? 1 : -1) * _forwardAmount;
-   //     if (_isGrounded)
-   //     {
-   //         _animator.SetFloat("JumpLeg", jumpLeg);
-   //     }
-   // }
-   //
-   // void checkGrounded()
-   // {
-   //     RaycastHit hitInfo;
-   //     if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, _GroundCheckDistance))
-   //     {
-   //         _moveNormal = hitInfo.normal;
-   //         _isGrounded = true;
-   //         _animator.applyRootMotion = true;
-   //     }
-   //     else
-   //     {
-   //         _isGrounded = false;
-   //         _moveNormal = Vector3.up;
-   //         _animator.applyRootMotion = false;
-   //     }
-   // }
-   //
-   // void moveBackAtGround()
-   // {
-   //     transform.Translate(0, 0, -1);
-   // }
-   //
-   // void moveAtAir()
-   // {
-   //     _rigidbody.AddForce(Physics.gravity);
-   //     //_GroundCheckDistance = _rigidbody.velocity.y < 0 ? _OrigGroundCheckDistance : 0.01f;
-   // }
+    void updateAnimator()
+    {
+        if(_forwardAmount >= 0)
+        { 
+            _animator.SetFloat("Forward", _forwardAmount);
+        }
+        else
+        {
+            _animator.SetFloat("Forward", 0.5f);
+        }
+        _animator.SetBool("OnGround", _isGrounded);
+        if (!_isGrounded)
+        {
+            _animator.SetFloat("Jump", _JumpAmount);
+        }
+        float runCycle = Mathf.Repeat(_animator.GetCurrentAnimatorStateInfo(0).normalizedTime + 0.2f, 1);
+        float jumpLeg = (runCycle < 0.5 ? 1 : -1) * _forwardAmount;
+        if (_isGrounded)
+        {
+            _animator.SetFloat("JumpLeg", jumpLeg);
+        }
+    }
+   
+    void checkGrounded()
+    {
+        RaycastHit hitInfo;
+        if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, groundCheckDistance))
+        {
+            _moveNormal = hitInfo.normal;
+            _isGrounded = true;
+        }
+        else
+        {
+            _isGrounded = false;
+            _moveNormal = Vector3.up;
+        }
+    }
+
+    void rotateCharacter()
+    {
+        transform.Rotate(transform.up, _turnAmount * Time.deltaTime);
+    }
 }
