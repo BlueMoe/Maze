@@ -1,18 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityStandardAssets.Characters.ThirdPerson;
 
 public class teleportation : MonoBehaviour
 {
     public Material phantomMaterial;
     public GameObject Ambra;
-    private float _teleportationSpeed = 5f;
+    private float _teleportationSpeed = 10f;
     private List<GameObject> phantomList;
     private List<float> phantomTime;
     // Use this for initialization
     void Start()
     {
+
     }
 
     // Update is called once per frame
@@ -20,20 +19,32 @@ public class teleportation : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.F))
         {
+            //实例化幻影
             GameObject phantom = Instantiate(Ambra, transform.position, transform.rotation) as GameObject;
+            //设置幻影材质
             phantom.GetComponentInChildren<Renderer>().material = phantomMaterial;
+            //停止动作
             phantom.GetComponent<Animator>().Stop();
-            phantom.GetComponent<teleportation>().enabled = false;
-            phantom.GetComponent<Rigidbody>().isKinematic = true;
-            phantom.GetComponent<CharacterController>().enabled = false;
-            phantom.GetComponent<moveController>().enabled = false;
-            
-            Ambra.GetComponent<CharacterController>().Move(Ambra.transform.TransformDirection(new Vector3(0, 0, 10)));
+            //设置幻影模式,移除不必要组件
+            phantom.GetComponent<ActionModeController>().changeMode(ActionModeController.ActionMode.PHANTOMMODE);
+            //瞬移安布拉
+            teleportAmbra();
+            //3秒后移除幻影
             Destroy(phantom, 3);
         }
     }
-    void OnCollisionEnter()
+
+    void teleportAmbra()
     {
-        //Ambra.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        var mode = Ambra.GetComponent<ActionModeController>().getActionMode();
+        if(mode == ActionModeController.ActionMode.CHARACTERCONTROLLERMODE)
+        {
+            Ambra.GetComponent<CharacterController>().Move(Ambra.transform.TransformDirection(new Vector3(0, 0, _teleportationSpeed)));
+        }
+        else if(mode == ActionModeController.ActionMode.RIGIDBODYMODE)
+        {
+            Ambra.GetComponent<Rigidbody>().AddForce(Ambra.transform.TransformDirection(new Vector3(0, 0, _teleportationSpeed)), ForceMode.VelocityChange);
+        }
+        
     }
 }

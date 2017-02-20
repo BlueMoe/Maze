@@ -5,14 +5,16 @@ using UnityEngine;
 public class moveController : MonoBehaviour {
 
     private Animator _animator;
-    private Rigidbody _rigidbody;
+    private Rigidbody _rigidBody;
     private float _forwardAmount;
     private float _turnAmount;
     private bool _isGrounded;
     private Vector3 _moveNormal;
     private float _OrigGroundCheckDistance;
-    private CharacterController _characterContorller;
+    private CharacterController _characterController;
+    private ActionModeController _actionModeController;
     private float _JumpAmount;
+    private ActionModeController.ActionMode _myMode;
 
     public float moveSpeed = 5.0f;
     public float rotateSpeed = 90.0f;
@@ -21,17 +23,21 @@ public class moveController : MonoBehaviour {
     public float gravity = 10.0f;
     // Use this for initialization
     void Start () {
+        _actionModeController = GetComponent<ActionModeController>();
+        _actionModeController.changeMode(ActionModeController.ActionMode.RIGIDBODYMODE);
+        _myMode = _actionModeController.getActionMode();
         _animator = GetComponent<Animator>();
-        _rigidbody = GetComponent<Rigidbody>();
+        _rigidBody = GetComponent<Rigidbody>();
         _OrigGroundCheckDistance = groundCheckDistance;
-        _characterContorller = GetComponent<CharacterController>();
+        _characterController = GetComponent<CharacterController>();
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
         _forwardAmount = 0;
         _turnAmount = 0;
         _isGrounded = true;
+
         if (Input.GetKey(KeyCode.W))
         {
             _forwardAmount = moveSpeed;
@@ -64,11 +70,8 @@ public class moveController : MonoBehaviour {
         }
         var move = new Vector3(0, _JumpAmount, _forwardAmount);
         move = transform.TransformDirection(move);
-        if(move != Vector3.zero)
-        {
-            //_characterContorller.Move(move*Time.deltaTime);
-            GetComponent<Rigidbody>().AddForce(move*Time.deltaTime,ForceMode.VelocityChange);
-        }
+
+        moveCharacter(move);
         updateAnimator();
         rotateCharacter();
     }
@@ -98,6 +101,7 @@ public class moveController : MonoBehaviour {
     void checkGrounded()
     {
         RaycastHit hitInfo;
+        Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * groundCheckDistance));
         if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, groundCheckDistance))
         {
             _moveNormal = hitInfo.normal;
@@ -108,10 +112,40 @@ public class moveController : MonoBehaviour {
             _isGrounded = false;
             _moveNormal = Vector3.up;
         }
+        
     }
 
     void rotateCharacter()
     {
         transform.Rotate(transform.up, _turnAmount * Time.deltaTime);
+    }
+
+    void moveCharacter(Vector3 move)
+    {
+        var curMode = _actionModeController.getActionMode();
+        if(_myMode != curMode)
+        {
+            //在模式切换后,部分组件已经被删除 初始化_characterController或_rigidBody的值
+            _myMode = curMode;
+            if(curMode == ActionModeController.ActionMode.CHARACTERCONTROLLERMODE)
+            {
+                _characterController = GetComponent<CharacterController>();
+            }
+            else if(curMode == ActionModeController.ActionMode.RIGIDBODYMODE)
+            {
+                _rigidBody = GetComponent<Rigidbody>();
+            }
+        }
+
+
+        //角色控制器模式和刚体模式使用不同的移动方式
+        if (_myMode == ActionModeController.ActionMode.CHARACTERCONTROLLERMODE)
+        {
+            _characterController.Move(move * Time.deltaTime);
+        }
+        else if (_myMode == ActionModeController.ActionMode.RIGIDBODYMODE)
+        {
+            _rigidBody.velocity = move;
+        }
     }
 }
