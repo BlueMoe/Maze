@@ -15,10 +15,11 @@ public class moveController : MonoBehaviour {
     private ActionModeController _actionModeController;
     private float _JumpAmount;
     private ActionModeController.ActionMode _myMode;
+    private Vector3 _relativeVelocity;
 
     public float moveSpeed = 5.0f;
     public float rotateSpeed = 90.0f;
-    public float jumpPower = 10.0f;
+    public float jumpPower = 7.0f;
     public float groundCheckDistance = 0.15f;
     public float gravity = 10.0f;
     // Use this for initialization
@@ -33,7 +34,7 @@ public class moveController : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void FixedUpdate () {
         _forwardAmount = 0;
         _turnAmount = 0;
         _isGrounded = true;
@@ -69,8 +70,9 @@ public class moveController : MonoBehaviour {
             _JumpAmount -= gravity * Time.deltaTime;
         }
         var move = new Vector3(0, _JumpAmount, _forwardAmount);
+        
         move = transform.TransformDirection(move);
-
+        
         moveCharacter(move);
         updateAnimator();
         rotateCharacter();
@@ -137,7 +139,6 @@ public class moveController : MonoBehaviour {
             }
         }
 
-
         //角色控制器模式和刚体模式使用不同的移动方式
         if (_myMode == ActionModeController.ActionMode.CHARACTERCONTROLLERMODE)
         {
@@ -145,7 +146,24 @@ public class moveController : MonoBehaviour {
         }
         else if (_myMode == ActionModeController.ActionMode.RIGIDBODYMODE)
         {
+            Debug.Log(_relativeVelocity);
             _rigidBody.velocity = move;
+            _rigidBody.velocity += _relativeVelocity;
+            
         }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        _rigidBody.velocity = Vector3.zero;
+    }
+    void OnCollisionStay(Collision collision)
+    {
+        if (collision.rigidbody != null)
+        _relativeVelocity = collision.rigidbody.velocity;
+    }
+    void OnCollisionExit(Collision collision)
+    {
+        _relativeVelocity = Vector3.zero;
     }
 }
