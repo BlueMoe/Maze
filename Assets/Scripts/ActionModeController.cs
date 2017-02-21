@@ -63,7 +63,6 @@ public class ActionModeController : MonoBehaviour {
     void setRigidBodyMode()
     {
         _rigidBody = Ambra.AddComponent<Rigidbody>();
-        Debug.Log(_rigidBody);
         _capsuleCollider = Ambra.AddComponent<CapsuleCollider>();
 
         //初始化刚体和胶囊碰撞器
@@ -103,10 +102,10 @@ public class ActionModeController : MonoBehaviour {
 
     void removePhantomNoNeedComponent()
     {
-        Destroy(GetComponent<teleportation>());
+        Destroy(GetComponent<Teleportation>());
         Destroy(GetComponent<Rigidbody>());
         Destroy(GetComponent<CharacterController>());
-        Destroy(GetComponent<moveController>());
+        Destroy(GetComponent<MoveController>());
         Destroy(GetComponent<CapsuleCollider>());
     }
 }

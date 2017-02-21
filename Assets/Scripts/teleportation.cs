@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class teleportation : MonoBehaviour
+public class Teleportation : MonoBehaviour
 {
     public Material phantomMaterial;
     public GameObject Ambra;
@@ -43,7 +43,8 @@ public class teleportation : MonoBehaviour
         }
         else if(mode == ActionModeController.ActionMode.RIGIDBODYMODE)
         {
-            Ambra.GetComponent<Rigidbody>().AddForce(Ambra.transform.TransformDirection(new Vector3(0, 0, _teleportationSpeed)), ForceMode.VelocityChange);
+            var teleportVec = Ambra.transform.TransformDirection(new Vector3(0, 0, _teleportationSpeed));
+            Ambra.GetComponent<MoveController>().setExternalVelocity(teleportVec, 1);
         }
         
     }

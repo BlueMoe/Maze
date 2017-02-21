@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class cameracontroller : MonoBehaviour {
+public class CameraController : MonoBehaviour {
 
     const float MAX_DISTANCE = 10;
     const float MIN_DISTANCE = 1;
@@ -10,8 +10,8 @@ public class cameracontroller : MonoBehaviour {
     public float cameraRotateSpeed = 0.1f;
     public float cameraMoveSpeed = 3;
     private float _distance = 2;
-    private float _theta = 180;
-    private float _phi = -10;
+    private float _theta = -90;
+    private float _phi = 10;
 	// Use this for initialization
 	void Start () {
         
@@ -37,13 +37,14 @@ public class cameracontroller : MonoBehaviour {
         {
             var x = Input.GetAxis("Mouse X");
             var y = Input.GetAxis("Mouse Y");
-            _theta += x * cameraRotateSpeed;
-            _phi += y * cameraRotateSpeed;
+            _theta -= x * cameraRotateSpeed;
+            _phi -= y * cameraRotateSpeed;
+            _phi = Mathf.Clamp(_phi, -89, 89);
         }
         if(Input.GetMouseButton(1))
         {
-            _theta = 180;
-            _phi = -10;
+            _theta = -90;
+            _phi = 10;
         }
         transform.position = caclCameraPosition();
         transform.LookAt(target.transform);
@@ -51,10 +52,9 @@ public class cameracontroller : MonoBehaviour {
 
     Vector3 caclCameraPosition()
     {
-        //球坐标系转空间坐标系
-        float x = _distance * Mathf.Sin(Mathf.PI / 180 * _theta) * Mathf.Cos(Mathf.PI / 180 * _phi);
-        float y = _distance * Mathf.Cos(Mathf.PI / 180 * _theta) * Mathf.Sin(Mathf.PI / 180 * _phi);
-        float z = _distance * Mathf.Cos(Mathf.PI / 180 * _theta);
+        float x = _distance * Mathf.Cos(Mathf.PI / 180 * _phi) * Mathf.Cos(Mathf.PI / 180 * _theta);
+        float y = _distance * Mathf.Sin(Mathf.PI / 180 * _phi);
+        float z = _distance * Mathf.Cos(Mathf.PI / 180 * _phi) * Mathf.Sin(Mathf.PI / 180 * _theta);
         return target.transform.TransformPoint(new Vector3(x, y, z));
     }
 }

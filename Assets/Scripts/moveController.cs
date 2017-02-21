@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class moveController : MonoBehaviour {
+public class MoveController : MonoBehaviour {
 
     private Animator _animator;
     private Rigidbody _rigidBody;
@@ -16,12 +16,15 @@ public class moveController : MonoBehaviour {
     private float _JumpAmount;
     private ActionModeController.ActionMode _myMode;
     private Vector3 _relativeVelocity;
+    private Vector3 _externalVelocity;
+    private float _externalVelocityTime;
 
     public float moveSpeed = 5.0f;
     public float rotateSpeed = 90.0f;
     public float jumpPower = 7.0f;
     public float groundCheckDistance = 0.15f;
     public float gravity = 10.0f;
+    
     // Use this for initialization
     void Start () {
         _actionModeController = GetComponent<ActionModeController>();
@@ -146,9 +149,13 @@ public class moveController : MonoBehaviour {
         }
         else if (_myMode == ActionModeController.ActionMode.RIGIDBODYMODE)
         {
-            Debug.Log(_relativeVelocity);
             _rigidBody.velocity = move;
             _rigidBody.velocity += _relativeVelocity;
+            if(_externalVelocityTime > 0)
+            {
+                _rigidBody.velocity += _externalVelocity;
+                _externalVelocityTime -= Time.deltaTime;
+            }
             
         }
     }
@@ -165,5 +172,10 @@ public class moveController : MonoBehaviour {
     void OnCollisionExit(Collision collision)
     {
         _relativeVelocity = Vector3.zero;
+    }
+    public void setExternalVelocity(Vector3 v, float seconds)
+    {
+        _externalVelocity = v;
+        _externalVelocityTime = seconds;
     }
 }
