@@ -42,8 +42,7 @@
 		o.Metallic = _Metallic;
 		o.Smoothness = _Glossiness;
 		o.Alpha = _alpha;
-		half rim = 1.0 - saturate(dot(normalize(IN.viewDir), o.Normal));
-		o.Emission = _RimColor.rgb* pow(rim, _RimWidth);
+		o.Emission = _RimColor.rgb*0.8;
 		
 	}
 	ENDCG

@@ -58,7 +58,6 @@ public class MoveController : MonoBehaviour {
         {
             _turnAmount = rotateSpeed;
         }
-        Debug.Log(_isGrounded);
         checkGrounded();
 
         if (_isGrounded)

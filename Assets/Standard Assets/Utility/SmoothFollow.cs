@@ -23,20 +23,6 @@ namespace UnityStandardAssets.Utility
 		// Use this for initialization
 		void Start() { }
 
-        void Update()
-        {
-            if(Input.GetAxis("Mouse ScrollWheel") > 0)
-            {
-                distance -= 1.0f;
-                if (distance < 2) distance = 2;
-            }
-            else if(Input.GetAxis("Mouse ScrollWheel") < 0)
-            {
-                distance += 1.0f;
-                if (distance > 15) distance = 15;
-            }
-        }
-
 		// Update is called once per frame
 		void LateUpdate()
 		{
