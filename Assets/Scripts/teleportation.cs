@@ -5,7 +5,7 @@ public class Teleportation : MonoBehaviour
 {
     public Material phantomMaterial;
     public GameObject Ambra;
-    private float _teleportationSpeed = 10f;
+    private float _teleportationSpeed = 50f;
     private List<GameObject> phantomList;
     private List<float> phantomTime;
     // Use this for initialization
@@ -44,7 +44,7 @@ public class Teleportation : MonoBehaviour
         else if(mode == ActionModeController.ActionMode.RIGIDBODYMODE)
         {
             var teleportVec = Ambra.transform.TransformDirection(new Vector3(0, 0, _teleportationSpeed));
-            Ambra.GetComponent<MoveController>().setExternalVelocity(teleportVec, 1);
+            Ambra.GetComponent<MoveController>().setExternalVelocity(teleportVec, 0.2f);
         }
         
     }

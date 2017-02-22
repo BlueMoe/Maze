@@ -6,7 +6,7 @@
 		_Metallic ("Metallic", Range(0,1)) = 0.0
 		_Bump("Bump",2D) = "bump"{}
 		_RimColor("_RimColor", Color) = (0.17,0.36,0.81,0.0)
-		_RimWidth("_RimWidth", Range(0.6,9.0)) = 0.9
+		_RimWidth("_RimWidth", Range(0.0,9.0)) = 0.9
 	}
 	SubShader {
 		Tags { "Queue"="Transparent" "RenderType"="Transparent" }

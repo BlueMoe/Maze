@@ -58,6 +58,7 @@ public class MoveController : MonoBehaviour {
         {
             _turnAmount = rotateSpeed;
         }
+        Debug.Log(_isGrounded);
         checkGrounded();
 
         if (_isGrounded)
@@ -154,9 +155,10 @@ public class MoveController : MonoBehaviour {
             if(_externalVelocityTime > 0)
             {
                 _rigidBody.velocity += _externalVelocity;
+                _rigidBody.velocity = new Vector3(_rigidBody.velocity.x, 0, _rigidBody.velocity.z);
                 _externalVelocityTime -= Time.deltaTime;
+                
             }
-            
         }
     }
 
