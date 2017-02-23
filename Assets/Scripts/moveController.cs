@@ -24,7 +24,14 @@ public class MoveController : MonoBehaviour {
     public float jumpPower = 7.0f;
     public float groundCheckDistance = 0.15f;
     public float gravity = 10.0f;
-    
+
+    public void setExternalVelocity(Vector3 v, float seconds)
+    {
+        _externalVelocity = v;
+        _externalVelocityTime = seconds;
+    }
+
+
     // Use this for initialization
     void Start () {
         _actionModeController = GetComponent<ActionModeController>();
@@ -173,10 +180,5 @@ public class MoveController : MonoBehaviour {
     void OnCollisionExit(Collision collision)
     {
         _relativeVelocity = Vector3.zero;
-    }
-    public void setExternalVelocity(Vector3 v, float seconds)
-    {
-        _externalVelocity = v;
-        _externalVelocityTime = seconds;
     }
 }

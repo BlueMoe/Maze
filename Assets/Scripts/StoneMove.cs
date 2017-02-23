@@ -7,7 +7,7 @@ public class StoneMove : MonoBehaviour
     private float _moveSpeed = 2;
     private float _distance = 25;
     private float _startTime;
-    private Vector3 _bottomPosition = new Vector3(0, -25, 0);
+    private Vector3 _bottomPosition = new Vector3(0, -27.5f, 0);
     private Vector3 _topPosition = new Vector3(0, 0, 0);
     private Vector3 _moveVec;
     private bool _ismoving = false;
