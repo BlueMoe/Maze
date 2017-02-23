@@ -1,58 +1,48 @@
 ﻿Shader "Custom/NailShader" {
-	Properties
-	{
-		_UpColor("UpColor",color) = (1,0,0,1)
-		_DownColor("DownColor",color) = (0,1,0,1)
-		_Center("Center",range(-0.7,0.7)) = 0
-		_R("R",range(0,0.5)) = 0.2
+	Properties{
+		_Color("Color", Color) = (1,1,1,1)
+		_MainTex("Albedo (RGB)", 2D) = "white" {}
+		_Glossiness("Smoothness", Range(0,1)) = 0.5
+		_Metallic("Metallic", Range(0,1)) = 0.0
+		_ButtonY("ButtonY", Range(-10,10)) = 0.0
+		_GradualScale("GradualScale",Range(0.1,10)) = 1.0
 	}
-
 		SubShader{
+		Tags{ "RenderType" = "Opaque" "DisableBatching" = "True" }//DisableBatching tag,ref: http://docs.unity3d.com/Manual/SL-SubShaderTags.html
+		LOD 200
 
-		pass {
-		Tags{ "LightMode" = "ForwardBase" }
+		CGPROGRAM
+			// Physically based Standard lighting model, and enable shadows on all light types
+			#pragma surface surf Standard fullforwardshadows vertex:vert
 
-			CGPROGRAM
-#pragma vertex vert
-#pragma fragment frag
+			// Use shader model 3.0 target, to get nicer looking lighting
+			#pragma target 3.0
 
-#include "UnityCG.cginc"
-#include "Lighting.cginc"
+		sampler2D _MainTex;
 
-			struct v2f {
-				float4 pos : POSITION;
-				float y : TEXCOORD0;
-			};
+		struct Input {
+			float2 uv_MainTex;
+			float3 my_vertPos;
+		};
 
-			float4 _UpColor;
-			float4 _DownColor;
-			float _Center;
-			float _R;
+		half _Glossiness;
+		half _Metallic;
+		fixed4 _Color;
+		float _ButtonY;
+		float _GradualScale;
+		void vert(inout appdata_full v, out Input o) {
 
-			v2f vert(appdata_base v) {
-				v2f o;
-				o.pos = mul(UNITY_MATRIX_MVP,v.vertex);
-				o.y = v.vertex.y;
-
-				return o;
-			}
-
-			fixed4 frag(v2f v) :COLOR
-			{
-
-				float d = v.y - _Center;//融合带
-				float s = abs(d);
-				d = d / s;//正负值分别描述上半部分和下半部分，取值1和-1
-
-				float f = s / _R; //范围>1：表示上下部分;范围<1:表示融合带
-				f = saturate(f);
-				d *= f;//表示全部[-1,1];范围>1：表示上部分；范围<1:表示融合带;范围<-1:表示下部分
-
-				d = d / 2 + 0.5;//将范围控制到[0,1],因为颜色值返回就是[0,1]
-				return lerp(_UpColor,_DownColor,d);
-			}
-
+			UNITY_INITIALIZE_OUTPUT(Input,o);
+			o.my_vertPos = v.vertex;
+		}
+		void surf(Input IN, inout SurfaceOutputStandard o) {
+			fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+			o.Albedo = c.rgb*(IN.my_vertPos.y*_GradualScale - _ButtonY);
+			o.Metallic = _Metallic;
+			o.Smoothness = _Glossiness;
+			o.Alpha = c.a;
+		}
 		ENDCG
 		}
-	}
+			FallBack "Diffuse"
 }

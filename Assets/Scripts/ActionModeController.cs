@@ -19,7 +19,7 @@ public class ActionModeController : MonoBehaviour {
     private CapsuleCollider _capsuleCollider;
     private CharacterController _charactConroller;
 
-    private const float RADIUS = 0.5f;
+    private const float RADIUS = 0.2f;
     private const float HEIGHT = 1.6f;
     private const float SKINWIDTH = 0.05f;
     private const float SLOPELIMIT = 89;

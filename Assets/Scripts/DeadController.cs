@@ -24,9 +24,4 @@ public class DeadController : MonoBehaviour {
         pos.y += 2;
         transform.position = pos;
     }
-
-    void DoActivateTrigger()
-    {
-        die();
-    }
 }
