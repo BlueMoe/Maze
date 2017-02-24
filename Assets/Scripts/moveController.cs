@@ -124,7 +124,6 @@ public class MoveController : MonoBehaviour {
             _isGrounded = false;
             _moveNormal = Vector3.up;
         }
-        
     }
 
     void rotateCharacter()

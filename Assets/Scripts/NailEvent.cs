@@ -16,9 +16,7 @@ public class NailEvent : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        
         var Ambra = other.gameObject.GetComponent<DeadController>();
-        Debug.Log(Ambra);
         if (Ambra)
         {
             Ambra.die();

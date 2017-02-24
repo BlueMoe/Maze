@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StoneMove : MonoBehaviour
 {
-    private float _moveSpeed = 4;
+    private float _moveSpeed = 6;
     private float _distance = 25;
     private float _startTime;
     private Vector3 _bottomPosition = new Vector3(0, -27.5f, 0);

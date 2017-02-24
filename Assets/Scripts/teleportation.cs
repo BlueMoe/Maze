@@ -17,6 +17,8 @@ public class Teleportation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+
         if (Input.GetKeyUp(KeyCode.F))
         {
             //实例化幻影

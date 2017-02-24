@@ -63,12 +63,10 @@ public class ActionModeController : MonoBehaviour {
     void setRigidBodyMode()
     {
         _rigidBody = Ambra.AddComponent<Rigidbody>();
-        _capsuleCollider = Ambra.AddComponent<CapsuleCollider>();
-
-        //初始化刚体和胶囊碰撞器
         _rigidBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY |RigidbodyConstraints.FreezeRotationZ;
         _rigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
+        _capsuleCollider = Ambra.AddComponent<CapsuleCollider>();
         _capsuleCollider.material = new PhysicMaterial("Wood");
         _capsuleCollider.center = CENTER;
         _capsuleCollider.radius = RADIUS;
@@ -86,7 +84,6 @@ public class ActionModeController : MonoBehaviour {
     void setCharacterControllerMode()
     {
         _charactConroller = Ambra.AddComponent<CharacterController>();
-        //初始化角色控制器
         _charactConroller.slopeLimit = SLOPELIMIT;
         _charactConroller.skinWidth = SKINWIDTH;
         _charactConroller.center = CENTER;
@@ -96,7 +93,8 @@ public class ActionModeController : MonoBehaviour {
 
     void removeCharacterControllerMode()
     {
-        Destroy(_charactConroller);
+        
+        Destroy(_capsuleCollider);
         _charactConroller = null;
     }
 

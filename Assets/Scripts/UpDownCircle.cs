@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UpDownCircle : MonoBehaviour
 {
-    private float _moveSpeed = 4;
+    private float _moveSpeed = 6;
     private float _startTime;
     public float _bottomPosition = -16.25f;
     public float _topPosition = -8.75f;
