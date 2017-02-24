@@ -13,6 +13,7 @@ public class StoneMove : MonoBehaviour
     private bool _ismoving = false;
     private bool _atBottom = false;
     private Transform _targetParent;
+    private Vector3 _targetSourceScale;
     // Use this for initialization
     void Start()
     {
@@ -72,11 +73,17 @@ public class StoneMove : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        var scale = transform.localScale;
         _targetParent = collision.gameObject.transform.parent;
+        _targetSourceScale = collision.gameObject.transform.localScale;
         collision.gameObject.transform.parent = transform;
+        collision.gameObject.transform.localScale = new Vector3(1.0f / scale.x * _targetSourceScale.x,
+                                                                1.0f / scale.y * _targetSourceScale.y,
+                                                                1.0f / scale.z * _targetSourceScale.z);
     }
     private void OnCollisionExit(Collision collision)
     {
         collision.gameObject.transform.parent = _targetParent;
+        collision.gameObject.transform.localScale = _targetSourceScale;
     }
 }

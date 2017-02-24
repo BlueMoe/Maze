@@ -71,7 +71,9 @@ public class UpDownCircle : MonoBehaviour
         _targetParent = collision.gameObject.transform.parent;
         _targetSourceScale = collision.gameObject.transform.localScale;
         collision.gameObject.transform.parent = transform;
-        collision.gameObject.transform.localScale = new Vector3(1.0f / scale.x, 1.0f / scale.y, 1.0f / scale.z);
+        collision.gameObject.transform.localScale = new Vector3(1.0f / scale.x * _targetSourceScale.x,
+                                                                1.0f / scale.y * _targetSourceScale.y,
+                                                                1.0f / scale.z * _targetSourceScale.z);
     }
     private void OnCollisionExit(Collision collision)
     {
