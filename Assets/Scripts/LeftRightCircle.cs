@@ -34,11 +34,9 @@ public class LeftRightCircle : MonoBehaviour
 
     void moveToRight()
     {
-        GetComponent<Rigidbody>().velocity = new Vector3(0, 0, _moveSpeed);
         transform.Translate(new Vector3(0, 0, _moveSpeed) * Time.deltaTime);
         if (transform.position.z >= _leftPosition)
         {
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
             transform.position = new Vector3(transform.position.x, transform.position.y, _leftPosition);
             _ismoving = false;
             _atLeft = false;
@@ -47,11 +45,9 @@ public class LeftRightCircle : MonoBehaviour
 
     void moveToLeft()
     {
-        GetComponent<Rigidbody>().velocity = new Vector3(0, 0, -_moveSpeed);
         transform.Translate(new Vector3(0, 0, -_moveSpeed) * Time.deltaTime);
         if (transform.position.z <= _rightPosition)
         {
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
             transform.position = new Vector3(transform.position.x, transform.position.y, _rightPosition);
             _ismoving = false;
             _atLeft = true;

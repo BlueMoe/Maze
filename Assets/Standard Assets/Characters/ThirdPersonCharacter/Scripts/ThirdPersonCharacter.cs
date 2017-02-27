@@ -220,6 +220,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 				m_GroundNormal = Vector3.up;
 				m_Animator.applyRootMotion = false;
 			}
+            Debug.Log(m_GroundCheckDistance);
 		}
 	}
 }

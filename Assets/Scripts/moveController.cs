@@ -18,6 +18,7 @@ public class MoveController : MonoBehaviour {
     private Vector3 _relativeVelocity;
     private Vector3 _externalVelocity;
     private float _externalVelocityTime;
+    private Transform _parent;
 
     public float moveSpeed = 5.0f;
     public float rotateSpeed = 90.0f;
@@ -35,7 +36,7 @@ public class MoveController : MonoBehaviour {
     // Use this for initialization
     void Start () {
         _actionModeController = GetComponent<ActionModeController>();
-        _actionModeController.changeMode(ActionModeController.ActionMode.RIGIDBODYMODE);
+        _actionModeController.changeMode(ActionModeController.ActionMode.CHARACTERCONTROLLERMODE);
         _myMode = _actionModeController.getActionMode();
         _animator = GetComponent<Animator>();
         _rigidBody = GetComponent<Rigidbody>();
@@ -79,13 +80,19 @@ public class MoveController : MonoBehaviour {
         {
             _JumpAmount -= gravity * Time.deltaTime;
         }
-        var move = new Vector3(0, _JumpAmount, _forwardAmount);
-        
-        move = transform.TransformDirection(move);
-        
+
+        var moveDirection = new Vector3(0, 0, 1);
+        moveDirection = transform.TransformDirection(moveDirection);
+        moveDirection = Vector3.ProjectOnPlane(moveDirection, _moveNormal);
+
+        var move = moveDirection * _forwardAmount;
+        move += Vector3.up * _JumpAmount;
+
         moveCharacter(move);
         updateAnimator();
         rotateCharacter();
+
+        transform.parent = _parent;
     }
     void updateAnimator()
     {
@@ -114,10 +121,16 @@ public class MoveController : MonoBehaviour {
     {
         RaycastHit hitInfo;
         Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * groundCheckDistance));
-        if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, groundCheckDistance))
+        if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, groundCheckDistance))
         {
             _moveNormal = hitInfo.normal;
             _isGrounded = true;
+            //忽略触发器的碰撞盒
+            if(hitInfo.collider.GetComponent<Collider>().isTrigger == true)
+            {
+                _isGrounded = false;
+                _moveNormal = Vector3.up;
+            }
         }
         else
         {
@@ -133,6 +146,7 @@ public class MoveController : MonoBehaviour {
 
     void moveCharacter(Vector3 move)
     {
+        
         var curMode = _actionModeController.getActionMode();
         if(_myMode != curMode)
         {
@@ -179,5 +193,8 @@ public class MoveController : MonoBehaviour {
     void OnCollisionExit(Collision collision)
     {
         _relativeVelocity = Vector3.zero;
+    }
+    void OnControllerColliderHit(ControllerColliderHit col)
+    {
     }
 }

@@ -73,6 +73,7 @@ public class StoneMove : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log("hehe");
         var scale = transform.localScale;
         _targetParent = collision.gameObject.transform.parent;
         _targetSourceScale = collision.gameObject.transform.localScale;
