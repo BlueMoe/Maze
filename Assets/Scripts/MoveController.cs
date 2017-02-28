@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveController : MonoBehaviour {
+public class MoveController : MonoBehaviour
+{
 
     private Animator _animator;
     private Rigidbody _rigidBody;
@@ -10,6 +11,7 @@ public class MoveController : MonoBehaviour {
     private float _turnAmount;
     private bool _isGrounded;
     private Vector3 _moveNormal;
+    private Vector3 _fallNormal;
     private float _OrigGroundCheckDistance;
     private CharacterController _characterController;
     private ActionModeController _actionModeController;
@@ -25,6 +27,7 @@ public class MoveController : MonoBehaviour {
     public float jumpPower = 7.0f;
     public float groundCheckDistance = 0.15f;
     public float gravity = 20.0f;
+    public float slopeAngelLimit = 60;
 
     public void setExternalVelocity(Vector3 v, float seconds)
     {
@@ -34,7 +37,8 @@ public class MoveController : MonoBehaviour {
 
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         _actionModeController = GetComponent<ActionModeController>();
         _actionModeController.changeMode(ActionModeController.ActionMode.CHARACTERCONTROLLERMODE);
         _myMode = _actionModeController.getActionMode();
@@ -45,7 +49,8 @@ public class MoveController : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void FixedUpdate () {
+    void FixedUpdate()
+    {
         _forwardAmount = 0;
         _turnAmount = 0;
         _isGrounded = true;
@@ -54,9 +59,9 @@ public class MoveController : MonoBehaviour {
         {
             _forwardAmount = moveSpeed;
         }
-        if(Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S))
         {
-            _forwardAmount = -moveSpeed/2;
+            _forwardAmount = -moveSpeed / 2;
         }
         if (Input.GetKey(KeyCode.A))
         {
@@ -83,13 +88,21 @@ public class MoveController : MonoBehaviour {
 
         var moveDirection = new Vector3(0, 0, 1);
         moveDirection = transform.TransformDirection(moveDirection);
+        Debug.Log(moveDirection);
         moveDirection = Vector3.ProjectOnPlane(moveDirection, _moveNormal).normalized;
-
+        Debug.Log(moveDirection);
         var move = moveDirection * _forwardAmount;
-        move += Vector3.Project(Vector3.up, moveDirection) * _JumpAmount;
-        move += Vector3.up * _JumpAmount;
+        var vertical = Vector3.up * _JumpAmount;
 
-        Debug.Log(move);
+        //竖直方向与平面法向量夹角大于slopeAngelLimit,开始下滑
+        if (Vector3.Dot(Vector3.up, _fallNormal) < Mathf.Cos(slopeAngelLimit / 180 * Mathf.PI))
+        {
+            move = Vector3.ProjectOnPlane(vertical, _fallNormal);
+        }
+        else
+        {
+            move += vertical;
+        }
 
         moveCharacter(move);
         updateAnimator();
@@ -99,8 +112,8 @@ public class MoveController : MonoBehaviour {
     }
     void updateAnimator()
     {
-        if(_forwardAmount >= 0)
-        { 
+        if (_forwardAmount >= 0)
+        {
             _animator.SetFloat("Forward", _forwardAmount);
         }
         else
@@ -119,7 +132,7 @@ public class MoveController : MonoBehaviour {
             _animator.SetFloat("JumpLeg", jumpLeg);
         }
     }
-   
+
     void checkGrounded()
     {
         RaycastHit hitInfo;
@@ -127,18 +140,28 @@ public class MoveController : MonoBehaviour {
         if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, groundCheckDistance))
         {
             _moveNormal = hitInfo.normal;
+            _fallNormal = hitInfo.normal;
             _isGrounded = true;
             //忽略触发器的碰撞盒
-            if(hitInfo.collider.GetComponent<Collider>().isTrigger == true)
+            if (hitInfo.collider.GetComponent<Collider>().isTrigger == true)
             {
                 _isGrounded = false;
                 _moveNormal = Vector3.up;
+                _fallNormal = Vector3.up;
             }
         }
         else
         {
             _isGrounded = false;
             _moveNormal = Vector3.up;
+            if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, groundCheckDistance + 0.1f))
+            {
+                _fallNormal = hitInfo.normal;
+            }
+            else
+            {
+                _fallNormal = Vector3.up;
+            }
         }
     }
 
@@ -149,17 +172,17 @@ public class MoveController : MonoBehaviour {
 
     void moveCharacter(Vector3 move)
     {
-        
+
         var curMode = _actionModeController.getActionMode();
-        if(_myMode != curMode)
+        if (_myMode != curMode)
         {
             //在模式切换后,部分组件已经被删除 初始化_characterController或_rigidBody的值
             _myMode = curMode;
-            if(curMode == ActionModeController.ActionMode.CHARACTERCONTROLLERMODE)
+            if (curMode == ActionModeController.ActionMode.CHARACTERCONTROLLERMODE)
             {
                 _characterController = GetComponent<CharacterController>();
             }
-            else if(curMode == ActionModeController.ActionMode.RIGIDBODYMODE)
+            else if (curMode == ActionModeController.ActionMode.RIGIDBODYMODE)
             {
                 _rigidBody = GetComponent<Rigidbody>();
             }
@@ -174,12 +197,12 @@ public class MoveController : MonoBehaviour {
         {
             _rigidBody.velocity = move;
             _rigidBody.velocity += _relativeVelocity;
-            if(_externalVelocityTime > 0)
+            if (_externalVelocityTime > 0)
             {
                 _rigidBody.velocity += _externalVelocity;
                 _rigidBody.velocity = new Vector3(_rigidBody.velocity.x, 0, _rigidBody.velocity.z);
                 _externalVelocityTime -= Time.deltaTime;
-                
+
             }
         }
     }
@@ -191,7 +214,7 @@ public class MoveController : MonoBehaviour {
     void OnCollisionStay(Collision collision)
     {
         if (collision.rigidbody != null)
-        _relativeVelocity = collision.rigidbody.velocity;
+            _relativeVelocity = collision.rigidbody.velocity;
     }
     void OnCollisionExit(Collision collision)
     {
