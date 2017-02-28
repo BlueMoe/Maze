@@ -24,7 +24,7 @@ public class MoveController : MonoBehaviour {
     public float rotateSpeed = 90.0f;
     public float jumpPower = 7.0f;
     public float groundCheckDistance = 0.15f;
-    public float gravity = 10.0f;
+    public float gravity = 20.0f;
 
     public void setExternalVelocity(Vector3 v, float seconds)
     {
@@ -83,10 +83,13 @@ public class MoveController : MonoBehaviour {
 
         var moveDirection = new Vector3(0, 0, 1);
         moveDirection = transform.TransformDirection(moveDirection);
-        moveDirection = Vector3.ProjectOnPlane(moveDirection, _moveNormal);
+        moveDirection = Vector3.ProjectOnPlane(moveDirection, _moveNormal).normalized;
 
         var move = moveDirection * _forwardAmount;
+        move += Vector3.Project(Vector3.up, moveDirection) * _JumpAmount;
         move += Vector3.up * _JumpAmount;
+
+        Debug.Log(move);
 
         moveCharacter(move);
         updateAnimator();

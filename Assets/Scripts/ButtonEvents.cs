@@ -42,4 +42,8 @@ public class ButtonEvents : MonoBehaviour {
         bahamut.GetComponent<Renderer>().material = bahamutNormalMaterial;
         _isDown = false;
     }
+    public bool isDown()
+    {
+        return _isDown;
+    }
 }

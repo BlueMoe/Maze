@@ -22,7 +22,7 @@ public class ActionModeController : MonoBehaviour {
     private const float RADIUS = 0.2f;
     private const float HEIGHT = 1.6f;
     private const float SKINWIDTH = 0.05f;
-    private const float SLOPELIMIT = 89;
+    private const float SLOPELIMIT = 57;
     private Vector3 CENTER = new Vector3(0, 0.8f, 0);
         
 	// Use this for initialization

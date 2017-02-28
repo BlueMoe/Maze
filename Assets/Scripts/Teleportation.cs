@@ -8,6 +8,10 @@ public class Teleportation : MonoBehaviour
     private float _teleportationSpeed = 50f;
     private List<GameObject> phantomList;
     private List<float> phantomTime;
+    private float _teleportCD = 2;
+    private float _teleportCDing;
+    private float _teleportTime = 0.2f;
+    private float _teleporting;
     // Use this for initialization
     void Start()
     {
@@ -17,6 +21,17 @@ public class Teleportation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(_teleporting > 0)
+        {
+            Ambra.GetComponent<CharacterController>().Move(Time.deltaTime * Ambra.transform.TransformDirection(new Vector3(0, 0, _teleportationSpeed)));
+            _teleporting -= Time.deltaTime;
+        }
+
+        if(_teleportCDing > 0)
+        {
+            _teleportCDing -= Time.deltaTime;
+            return;
+        }
         
 
         if (Input.GetKeyUp(KeyCode.F))
@@ -41,7 +56,8 @@ public class Teleportation : MonoBehaviour
         var mode = Ambra.GetComponent<ActionModeController>().getActionMode();
         if(mode == ActionModeController.ActionMode.CHARACTERCONTROLLERMODE)
         {
-            Ambra.GetComponent<CharacterController>().Move(Ambra.transform.TransformDirection(new Vector3(0, 0, _teleportationSpeed)));
+            _teleportCDing = _teleportCD;
+            _teleporting = _teleportTime;
         }
         else if(mode == ActionModeController.ActionMode.RIGIDBODYMODE)
         {
