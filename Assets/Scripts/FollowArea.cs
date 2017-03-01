@@ -17,18 +17,18 @@ public class FollowArea : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<CharacterController>() == null) return;
+        if (other.gameObject.GetComponent<ActionModeController>() == null) return;
         _targetParent = other.transform.parent;
         other.transform.parent = transform.parent;
     }
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.GetComponent<CharacterController>() == null) return;
+        if (other.gameObject.GetComponent<ActionModeController>() == null) return;
         other.transform.parent = transform.parent;
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.GetComponent<CharacterController>() == null) return;
+        if (other.gameObject.GetComponent<ActionModeController>() == null) return;
         other.transform.parent = _targetParent;
     }
 }

@@ -60,20 +60,4 @@ public class LeftRightCircle : MonoBehaviour
         _ismoving = true;
         _startTime = Time.time;
     }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        var scale = transform.localScale;
-        _targetParent = collision.gameObject.transform.parent;
-        _targetSourceScale = collision.gameObject.transform.localScale;
-        collision.gameObject.transform.parent = transform;
-        collision.gameObject.transform.localScale = new Vector3(1.0f / scale.x * _targetSourceScale.x,
-                                                                1.0f / scale.y * _targetSourceScale.y,
-                                                                1.0f / scale.z * _targetSourceScale.z);
-    }
-    private void OnCollisionExit(Collision collision)
-    {
-        collision.gameObject.transform.parent = _targetParent;
-        collision.gameObject.transform.localScale = _targetSourceScale;
-    }
 }

@@ -12,6 +12,7 @@ public class Teleportation : MonoBehaviour
     private float _teleportCDing;
     private float _teleportTime = 0.2f;
     private float _teleporting;
+    private float _t;
     // Use this for initialization
     void Start()
     {
@@ -32,10 +33,9 @@ public class Teleportation : MonoBehaviour
             _teleportCDing -= Time.deltaTime;
             return;
         }
-        
-
         if (Input.GetKeyUp(KeyCode.F))
         {
+           
             //实例化幻影
             GameObject phantom = Instantiate(Ambra, transform.position, transform.rotation) as GameObject;
             //设置幻影材质
@@ -47,7 +47,7 @@ public class Teleportation : MonoBehaviour
             //瞬移安布拉
             teleportAmbra();
             //3秒后移除幻影
-            Destroy(phantom, 3);
+            Destroy(phantom, 0.1f);
         }
     }
 
