@@ -5,15 +5,17 @@ using UnityEngine;
 public class BahamutTreasure : MonoBehaviour {
 
     public GameObject Ambra;
+    public float _rotateSpeed = 180;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+    private TreasureManager _treasureManager;
+    // Use this for initialization
+    void Start () {
+        _treasureManager = transform.parent.GetComponent<TreasureManager>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
-		
+        transform.Rotate(Vector3.up * Time.deltaTime * _rotateSpeed);
 	}
 
     void OnCollisionEnter(Collision collision)
@@ -21,6 +23,11 @@ public class BahamutTreasure : MonoBehaviour {
         if (Ambra == null) return;
         if (collision.gameObject != Ambra) return;
         
-        Destroy(gameObject);
+        if(_treasureManager != null)
+        {
+            _treasureManager.collectTreasure();
+            Destroy(gameObject);
+        }
+        
     }
 }

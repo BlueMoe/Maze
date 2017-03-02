@@ -106,5 +106,6 @@ public class ActionModeController : MonoBehaviour {
         Destroy(GetComponent<CharacterController>());
         Destroy(GetComponent<MoveController>());
         Destroy(GetComponent<CapsuleCollider>());
+        Destroy(GetComponentInChildren<Light>());
     }
 }

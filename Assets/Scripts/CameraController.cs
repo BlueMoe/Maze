@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour {
     public GameObject target;
     public float cameraRotateSpeed = 0.1f;
     public float cameraMoveSpeed = 3;
-    private float _distance = 2;
+    private float _distance = 4;
     private float _theta = -90;
     private float _phi = 10;
 	// Use this for initialization
