@@ -9,30 +9,23 @@ public class Teleportation : MonoBehaviour
     private float _teleportCDing;
     private float _teleportCDTime = 8;
     private float _mp;
-    private float _mpMax = 100;
+    private float _mpMax;
     private float _mpCastSpeed = 50;
     private float _mpRegenSpeed = 20;
     private float _normalSpeed;
-    private UISlider _mpBar;
-    private UISprite _mpBarFore;
-    private Color _mpBarColor;
-    private Color _mpBarColorCD = new Color(1, 0, 0);
     private float _fastRatio = 1.5f;
     // Use this for initialization
     void Start()
     {
         //正常状态下的移动速度
+        _mpMax = 100;
         _normalSpeed = Ambra.GetComponent<MoveController>().moveSpeed;
         _mp = _mpMax;
-        _mpBar = mpBarRoot.GetComponent<UISlider>();
-        _mpBarColor = _mpBar.foregroundWidget.color;
     }
 
     // Update is called once per frame
     void Update()
     {
-        updateUI();
-
         if (_teleportCDing > 0)
         {
             mpReginInCDTime();
@@ -101,16 +94,16 @@ public class Teleportation : MonoBehaviour
     {
         _mp -= Time.deltaTime * _mpCastSpeed;
     }
-    void updateUI()
+    public float getMp()
     {
-        _mpBar.Set(_mp / _mpMax);
-        if(_teleportCDing > 0)
-        {
-            _mpBar.foregroundWidget.color = _mpBarColorCD;
-        }
-        else
-        {
-            _mpBar.foregroundWidget.color = _mpBarColor;
-        }
+        return _mp;
+    }
+    public float getMaxMp()
+    {
+        return _mpMax;
+    }
+    public float getCD()
+    {
+        return _teleportCDing;
     }
 }

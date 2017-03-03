@@ -21,4 +21,12 @@ public class TreasureManager : MonoBehaviour {
         _collectTreasureCount++;
         Debug.Log(_collectTreasureCount.ToString() + "/" + _totalTreasureCount.ToString());
     }
+    public int getTotalTreasureCount()
+    {
+        return _totalTreasureCount;
+    }
+    public int getCollectTreasureCount()
+    {
+        return _collectTreasureCount;
+    }
 }
