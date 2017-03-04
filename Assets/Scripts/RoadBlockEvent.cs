@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class RoadBlockEvent : MonoBehaviour {
 
+    public bool destroyButtonWithRoadBlock = false;
+
+    public GameObject controllButton;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -17,5 +21,9 @@ public class RoadBlockEvent : MonoBehaviour {
     void DoActivateTrigger()
     {
         Destroy(gameObject);
+        if(destroyButtonWithRoadBlock)
+        {
+            Destroy(controllButton);
+        }
     }
 }

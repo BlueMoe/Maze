@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class DeadController : MonoBehaviour {
 
-    public List<GameObject> checkPoint = new List<GameObject>();
+    public List<GameObject> checkPoint;
 
     private int _checkPointIndex = 0;
+
+    private void Start()
+    {
+    }
 
     public void die()
     {
@@ -20,8 +24,10 @@ public class DeadController : MonoBehaviour {
 
     void moveToCheckPoint(int index)
     {
-        Vector3 pos = checkPoint[index].transform.position;
-        pos.y += 2;
+        var pos = checkPoint[index].transform.position;
+        var rotate = checkPoint[index].transform.rotation;
         transform.position = pos;
+        transform.rotation = rotate;
+        transform.Rotate(Vector3.up, 90);
     }
 }

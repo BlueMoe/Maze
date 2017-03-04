@@ -19,6 +19,9 @@ public class SphereMove : MonoBehaviour {
     private bool _back = false;
     private Vector3 _rotationAxis;
     private Vector3 _move;
+
+    private Vector3 _v = Vector3.zero;
+    private Vector3 _angularv = Vector3.zero;
     // Use this for initialization
     void Start () {
         _rigidBody = GetComponent<Rigidbody>();
@@ -28,8 +31,9 @@ public class SphereMove : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        
-	}
+        _rigidBody.angularVelocity = _angularv;
+        _rigidBody.velocity = _v;
+    }
 
     void DoActivateTrigger()
     {
@@ -43,16 +47,16 @@ public class SphereMove : MonoBehaviour {
     void moveToTargetPosition()
     {
         unLockPosition();
-        Vector3 move = targetPosition - originPosition;
-        _rigidBody.angularVelocity = Vector3.Cross(move,Vector3.up).normalized * sphereSpeed;
-        _rigidBody.velocity = move.normalized * sphereSpeed;  
+        Vector3 move = Vector3.ProjectOnPlane(targetPosition - originPosition,Vector3.up);
+        _angularv= Vector3.Cross(move,Vector3.up).normalized * -sphereSpeed;
+        _v = move.normalized * sphereSpeed;  
     }
 
     void moveBackToSourcePosition()
     {
         unLockPosition();
-        _rigidBody.angularVelocity = _rotationAxis * -sphereSpeed;
-        _rigidBody.velocity = _move.normalized * -sphereSpeed;
+        _angularv = _rotationAxis * -sphereSpeed;
+        _v = _move.normalized * -sphereSpeed;
     }
     void resetButtons()
     {

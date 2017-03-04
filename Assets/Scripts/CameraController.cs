@@ -24,13 +24,15 @@ public class CameraController : MonoBehaviour {
 
         if(Input.GetAxis("Mouse ScrollWheel") > 0)
         {
+            Debug.Log(_distance);
             _distance -= 0.1f * cameraMoveSpeed;
             if (_distance < MIN_DISTANCE) _distance = MIN_DISTANCE;
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0)
         {
+            Debug.Log(_distance);
             _distance += 0.1f * cameraMoveSpeed;
-            if (_distance < MIN_DISTANCE) _distance = MIN_DISTANCE;
+            if (_distance > MAX_DISTANCE) _distance = MAX_DISTANCE;
         }
 
         if (Input.GetMouseButton(0))

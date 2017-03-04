@@ -9,16 +9,16 @@ public class Teleportation : MonoBehaviour
     private float _teleportCDing;
     private float _teleportCDTime = 8;
     private float _mp;
-    private float _mpMax;
+    public float _mpMax = 100;
     private float _mpCastSpeed = 50;
     private float _mpRegenSpeed = 20;
     private float _normalSpeed;
     private float _fastRatio = 1.5f;
+    private bool _isFastMode = false;
     // Use this for initialization
     void Start()
     {
         //正常状态下的移动速度
-        _mpMax = 100;
         _normalSpeed = Ambra.GetComponent<MoveController>().moveSpeed;
         _mp = _mpMax;
     }
@@ -26,6 +26,12 @@ public class Teleportation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKeyUp   (KeyCode.F))
+        {
+            _isFastMode = !_isFastMode;
+        }
+
+
         if (_teleportCDing > 0)
         {
             mpReginInCDTime();
@@ -33,7 +39,7 @@ public class Teleportation : MonoBehaviour
             return;
         }
 
-        if(Input.GetKey(KeyCode.F))
+        if(_isFastMode)
         {
             mpCast();
             speedUp();

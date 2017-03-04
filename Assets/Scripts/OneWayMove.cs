@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Utility;
 
 public class OneWayMove : MonoBehaviour
 {
     public float _moveSpeed = 6;
     public Vector3 _bottomPosition = new Vector3(0, -27.5f, 0);
     public Vector3 _topPosition = new Vector3(0, 0, 0);
+    public GameObject atTopResetButton;
+    public GameObject atBottomResetButton;
     private bool _ismoving = false;
     public bool _atBottom = false;
     private Transform _targetParent;
@@ -45,6 +48,19 @@ public class OneWayMove : MonoBehaviour
             transform.position = _topPosition;
             _ismoving = false;
             _atBottom = false;
+            if (atTopResetButton != null)
+            {
+                var btnEvent = atTopResetButton.GetComponentInChildren<ButtonEvents>();
+                var btnTrigger = atTopResetButton.GetComponentInChildren<ActivateTrigger>();
+                if(btnEvent != null)
+                {
+                    btnEvent.setButtonUp();
+                }
+                if(btnTrigger != null)
+                {
+                    btnTrigger.triggerCount = 1;
+                }
+            }
         }
     }
 
@@ -58,6 +74,19 @@ public class OneWayMove : MonoBehaviour
             transform.position = _bottomPosition;
             _ismoving = false;
             _atBottom = true;
+            if (atBottomResetButton != null)
+            {
+                var btnEvent = atBottomResetButton.GetComponentInChildren<ButtonEvents>();
+                var btnTrigger = atBottomResetButton.GetComponentInChildren<ActivateTrigger>();
+                if (btnEvent != null)
+                {
+                    btnEvent.setButtonUp();
+                }
+                if (btnTrigger != null)
+                {
+                    btnTrigger.triggerCount = 1;
+                }
+            }
         }
     }
 
