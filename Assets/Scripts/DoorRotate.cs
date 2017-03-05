@@ -11,13 +11,13 @@ public class DoorRotate : MonoBehaviour {
 
     private float _rotateAngel;
     private float _rotateSpeed;
+    private Vector3 _originEulerAngles;
     private bool _isRotating;
-    private Quaternion _beg;
-    private Quaternion _end;
     // Use this for initialization
     void Start () {
         _rotateAngel = endAngel - startAngel;
         _rotateSpeed = _rotateAngel / rotateTime;
+        _originEulerAngles = transform.eulerAngles;
 	}
 	
 	// Update is called once per frame
@@ -31,7 +31,7 @@ public class DoorRotate : MonoBehaviour {
 
         if (!isRotateLoop)
         {
-            transform.eulerAngles = new Vector3(0, 0, endAngel);    
+            transform.eulerAngles = new Vector3(_originEulerAngles.x, _originEulerAngles.y , endAngel);    
         }
         
     }

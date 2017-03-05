@@ -89,7 +89,11 @@ public class SphereMove : MonoBehaviour {
     }
     void lockPosition()
     {
-        _rigidBody.constraints = RigidbodyConstraints.FreezeAll;
+        _rigidBody.constraints = RigidbodyConstraints.FreezeRotationX|
+                                 RigidbodyConstraints.FreezeRotationY| 
+                                 RigidbodyConstraints.FreezeRotationZ| 
+                                 RigidbodyConstraints.FreezePositionX| 
+                                 RigidbodyConstraints.FreezePositionZ;
     }
     void unLockPosition()
     {
