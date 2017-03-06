@@ -96,24 +96,29 @@ public class MoveController : MonoBehaviour
         var vertical = Vector3.up * _JumpAmount;
 
         //平面法向量就是竖直方向,正常处理跳跃和自由下落
-        if(Vector3.Dot(Vector3.up, _fallNormal) == Mathf.Cos(0))
+        if(Vector3.Dot(Vector3.up, _fallNormal)/Vector3.up.magnitude*_fallNormal.magnitude == Mathf.Cos(0))
         {
+            Debug.Log("1");
+
             move += vertical;
         }
         //竖直方向与平面法向量夹角大于slopeAngelLimit,开始下滑
-        else if (Vector3.Dot(Vector3.up,_fallNormal) < Mathf.Cos(slopeAngelLimit / 180 * Mathf.PI))
+        else if (Vector3.Dot(Vector3.up,_fallNormal) / Vector3.up.magnitude * _fallNormal.magnitude < Mathf.Cos(slopeAngelLimit / 180 * Mathf.PI))
         {
+            Debug.Log("2");
             move = vertical;
         }
         //竖直方向与平面法向量夹角小于slopeAngelLimit,忽略下落
         else
         {
-            if(Vector3.Dot(vertical,Vector3.down) >= 0)
+            Debug.Log("3");
+            if (Vector3.Dot(vertical,Vector3.down) >= 0)
             {
                 vertical = Vector3.zero;
             }
             move += vertical;
         }
+        Debug.Log(move);
         moveCharacter(move);
         updateAnimator();
         rotateCharacter();
@@ -160,25 +165,25 @@ public class MoveController : MonoBehaviour
             _isGrounded = true;
             _airTime = 0;
         }
-        else if(Physics.Raycast(transform.position + Vector3.up * offset + transform.forward *0.1f, Vector3.down, out hitInfo, groundCheckDistance / 2 + offset))
+        else if(Physics.Raycast(transform.position + Vector3.up * offset + transform.forward *0.1f, Vector3.down, out hitInfo, groundCheckDistance / 4 + offset))
         {
             _moveNormal = hitInfo.normal;
             _isGrounded = true;
             _airTime = 0;
         }
-        else if(Physics.Raycast(transform.position + Vector3.up * offset + transform.forward * -0.1f, Vector3.down, out hitInfo, groundCheckDistance / 2 + offset))
+        else if(Physics.Raycast(transform.position + Vector3.up * offset + transform.forward * -0.1f, Vector3.down, out hitInfo, groundCheckDistance / 4 + offset))
         {
             _moveNormal = hitInfo.normal;
             _isGrounded = true;
             _airTime = 0;
         }
-        else if (Physics.Raycast(transform.position + Vector3.up * offset + transform.right * 0.1f, Vector3.down, out hitInfo, groundCheckDistance / 2 + offset))
+        else if (Physics.Raycast(transform.position + Vector3.up * offset + transform.right * 0.1f, Vector3.down, out hitInfo, groundCheckDistance / 4 + offset))
         {
             _moveNormal = hitInfo.normal;
             _isGrounded = true;
             _airTime = 0;
         }
-        else if (Physics.Raycast(transform.position + Vector3.up * offset + transform.right * -0.1f, Vector3.down, out hitInfo, groundCheckDistance / 2 + offset))
+        else if (Physics.Raycast(transform.position + Vector3.up * offset + transform.right * -0.1f, Vector3.down, out hitInfo, groundCheckDistance / 4 + offset))
         {
             _moveNormal = hitInfo.normal;
             _isGrounded = true;
@@ -203,10 +208,13 @@ public class MoveController : MonoBehaviour
 
     void OnDrawGizmos()
     {
+        Gizmos.DrawLine(transform.position, transform.position + _fallNormal);
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.up);
         Gizmos.DrawLine(transform.position, transform.position + Vector3.down * (groundCheckDistance + 0.1f));
-        Gizmos.DrawLine(transform.position + transform.forward * -0.1f, transform.position + transform.forward * -0.1f + Vector3.down * (groundCheckDistance + 0.1f));
-        Gizmos.DrawLine(transform.position + transform.forward * 0.1f, transform.position + transform.forward * 0.1f + Vector3.down * (groundCheckDistance + 0.1f));
-
+        Gizmos.DrawLine(transform.position + transform.forward * -0.1f, transform.position + transform.forward * -0.1f + Vector3.down * (groundCheckDistance/ 4));
+        Gizmos.DrawLine(transform.position + transform.forward * 0.1f, transform.position + transform.forward * 0.1f + Vector3.down * (groundCheckDistance/4));
+        Gizmos.DrawLine(transform.position + transform.right * -0.1f, transform.position + transform.right * -0.1f + Vector3.down * (groundCheckDistance / 4));
+        Gizmos.DrawLine(transform.position + transform.right * 0.1f, transform.position + transform.right * 0.1f + Vector3.down * (groundCheckDistance / 4));
     }
 
 
