@@ -1,48 +1,49 @@
 ﻿Shader "Custom/NailShader" {
 	Properties{
-		_Color("Color", Color) = (1,1,1,1)
+		_Color("Color", Color) = (0,0,1,0.5)
 		_MainTex("Albedo (RGB)", 2D) = "white" {}
-		_Glossiness("Smoothness", Range(0,1)) = 0.5
+	_Glossiness("Smoothness", Range(0,1)) = 0.5
 		_Metallic("Metallic", Range(0,1)) = 0.0
-		_ButtonY("ButtonY", Range(-10,10)) = 0.0
-		_GradualScale("GradualScale",Range(0.1,10)) = 1.0
+		_Bump("Bump",2D) = "bump"{}
+	_RimColor("_RimColor", Color) = (0.17,0.36,0.81,0.0)
+		_RimWidth("_RimWidth", Range(0.0,9.0)) = 0.9
 	}
 		SubShader{
-		Tags{ "RenderType" = "Opaque" "DisableBatching" = "True" }//DisableBatching tag,ref: http://docs.unity3d.com/Manual/SL-SubShaderTags.html
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 		LOD 200
 
 		CGPROGRAM
-			// Physically based Standard lighting model, and enable shadows on all light types
-			#pragma surface surf Standard fullforwardshadows vertex:vert
+		// Physically based Standard lighting model, and enable shadows on all light types
+#pragma surface surf Standard fullforwardshadows alpha
 
-			// Use shader model 3.0 target, to get nicer looking lighting
-			#pragma target 3.0
+		// Use shader model 3.0 target, to get nicer looking lighting
+#pragma target 3.0
 
 		sampler2D _MainTex;
+	sampler2D _Bump;
+	struct Input {
+		float2 uv_MainTex;
+		float2 uv_Bump;
+		float3 viewDir;
+	};
 
-		struct Input {
-			float2 uv_MainTex;
-			float3 my_vertPos;
-		};
+	half _Glossiness;
+	half _Metallic;
+	fixed4 _Color;
+	fixed4 _RimColor;
+	fixed _RimWidth;
 
-		half _Glossiness;
-		half _Metallic;
-		fixed4 _Color;
-		float _ButtonY;
-		float _GradualScale;
-		void vert(inout appdata_full v, out Input o) {
-
-			UNITY_INITIALIZE_OUTPUT(Input,o);
-			o.my_vertPos = v.vertex;
-		}
-		void surf(Input IN, inout SurfaceOutputStandard o) {
-			fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-			o.Albedo = c.rgb*(IN.my_vertPos.y*_GradualScale - _ButtonY);
-			o.Metallic = _Metallic;
-			o.Smoothness = _Glossiness;
-			o.Alpha = c.a;
-		}
-		ENDCG
-		}
-			FallBack "Diffuse"
+	void surf(Input IN, inout SurfaceOutputStandard o) {
+		fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+		o.Albedo = _Color;
+		o.Normal = UnpackNormal(tex2D(_Bump, IN.uv_Bump));
+		o.Metallic = _Metallic;
+		o.Smoothness = _Glossiness;
+		o.Alpha = c.a;
+		half rim = 1.0 - saturate(dot(normalize(IN.viewDir), o.Normal));
+		o.Emission = _RimColor.rgb * pow(rim, _RimWidth);
+	}
+	ENDCG
+	}
+		FallBack "Diffuse"
 }

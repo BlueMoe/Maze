@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InstantiateNails : MonoBehaviour
+public class GenerateNails : MonoBehaviour
 {
 
     public GameObject nail;

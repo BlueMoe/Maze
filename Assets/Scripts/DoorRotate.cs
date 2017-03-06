@@ -13,12 +13,14 @@ public class DoorRotate : MonoBehaviour {
     private float _rotateSpeed;
     private Vector3 _originEulerAngles;
     private bool _isRotating;
+    private float _rotateTime;
     // Use this for initialization
     void Start () {
         _rotateAngel = endAngel - startAngel;
         _rotateSpeed = _rotateAngel / rotateTime;
         _originEulerAngles = transform.eulerAngles;
-	}
+        _rotateTime = rotateTime;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -27,17 +29,25 @@ public class DoorRotate : MonoBehaviour {
             return;
         }
 
-        transform.Rotate(transform.forward, _rotateSpeed * Time.deltaTime);
-
-        if (!isRotateLoop)
+        transform.Rotate(0, 0, _rotateSpeed * Time.deltaTime);
+        _rotateTime -= Time.deltaTime;
+        
+        if (!isRotateLoop && _rotateTime < 0)
         {
             transform.eulerAngles = new Vector3(_originEulerAngles.x, _originEulerAngles.y , endAngel);    
         }
         
+    }
+    
+    void DoActivateTrigger()
+    {
+        RotateStart();
     }
 
     public void RotateStart()
     {
         _isRotating = true;
     }
+
+    
 }

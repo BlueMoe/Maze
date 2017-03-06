@@ -86,6 +86,7 @@ public class MoveController : MonoBehaviour
         else
         {
             _JumpAmount -= gravity * Time.deltaTime;
+            if (_JumpAmount < -gravity*2) _JumpAmount = -gravity * 2;
         }
 
         var moveDirection = new Vector3(0, 0, 1);
@@ -156,7 +157,30 @@ public class MoveController : MonoBehaviour
         if (Physics.Raycast(transform.position + Vector3.up * offset, Vector3.down, out hitInfo, groundCheckDistance + offset))
         {
             _moveNormal = hitInfo.normal;
-            _fallNormal = hitInfo.normal;
+            _isGrounded = true;
+            _airTime = 0;
+        }
+        else if(Physics.Raycast(transform.position + Vector3.up * offset + transform.forward *0.1f, Vector3.down, out hitInfo, groundCheckDistance / 2 + offset))
+        {
+            _moveNormal = hitInfo.normal;
+            _isGrounded = true;
+            _airTime = 0;
+        }
+        else if(Physics.Raycast(transform.position + Vector3.up * offset + transform.forward * -0.1f, Vector3.down, out hitInfo, groundCheckDistance / 2 + offset))
+        {
+            _moveNormal = hitInfo.normal;
+            _isGrounded = true;
+            _airTime = 0;
+        }
+        else if (Physics.Raycast(transform.position + Vector3.up * offset + transform.right * 0.1f, Vector3.down, out hitInfo, groundCheckDistance / 2 + offset))
+        {
+            _moveNormal = hitInfo.normal;
+            _isGrounded = true;
+            _airTime = 0;
+        }
+        else if (Physics.Raycast(transform.position + Vector3.up * offset + transform.right * -0.1f, Vector3.down, out hitInfo, groundCheckDistance / 2 + offset))
+        {
+            _moveNormal = hitInfo.normal;
             _isGrounded = true;
             _airTime = 0;
         }
@@ -165,21 +189,23 @@ public class MoveController : MonoBehaviour
             _isGrounded = false;
             _airTime += Time.deltaTime;
             _moveNormal = Vector3.up;
-            if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, groundCheckDistance + 0.1f))
-            {
-                _fallNormal = hitInfo.normal;
-            }
-            else
-            {
-                _fallNormal = Vector3.up;
-            }
+
         }
-        
+        if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, groundCheckDistance + 0.3f))
+        {
+            _fallNormal = hitInfo.normal;
+        }
+        else
+        {
+            _fallNormal = Vector3.up;
+        }
     }
 
     void OnDrawGizmos()
     {
-        //Gizmos.DrawLine(transform.position, transform.position);
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * (groundCheckDistance + 0.1f));
+        Gizmos.DrawLine(transform.position + transform.forward * -0.1f, transform.position + transform.forward * -0.1f + Vector3.down * (groundCheckDistance + 0.1f));
+        Gizmos.DrawLine(transform.position + transform.forward * 0.1f, transform.position + transform.forward * 0.1f + Vector3.down * (groundCheckDistance + 0.1f));
 
     }
 
