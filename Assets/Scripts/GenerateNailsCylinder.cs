@@ -45,8 +45,8 @@ public class GenerateNailsCylinder : MonoBehaviour {
         //    }
         //}
 
-        var row = _radius * 2 * Mathf.PI / _rowWidth;
-        var col = _height / _colWidth;
+        int row = (int)(_radius * 2 * Mathf.PI / _rowWidth);
+        int col = (int)(_height / _colWidth);
 
         for(int i =0;i< row;i++)
         {

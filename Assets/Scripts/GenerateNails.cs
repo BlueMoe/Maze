@@ -6,12 +6,14 @@ public class GenerateNails : MonoBehaviour
 {
 
     public GameObject nail;
-
+    public Shader transparentShader;
+    public GameObject nailList;
     private float _rowWidth = 0.5f;
     private float _colWidth = 0.5f;
     // Use this for initialization
     void Start()
     {
+        GetComponent<Renderer>().material.shader = transparentShader;
         addNails();
     }
 
@@ -23,10 +25,9 @@ public class GenerateNails : MonoBehaviour
 
     void addNails()
     {
-        var box = GetComponent<BoxCollider>();
-        var x = box.size.x;
-        var y = box.size.y;
-        var z = box.size.z;
+        var x = transform.localScale.x;
+        var y = transform.localScale.y;
+        var z = transform.localScale.z;
 
         var row = x / _rowWidth;
         var col = z / _colWidth;
@@ -35,9 +36,9 @@ public class GenerateNails : MonoBehaviour
         {
             for (int j = 0; j < col; j++)
             {
-                var pos = transform.TransformPoint(new Vector3(i * _rowWidth - x / 2, -y / 2, j * _colWidth - z / 2));
+                var pos = nailList.transform.TransformPoint(new Vector3(i * _rowWidth, 0, j * _colWidth));
                 var nails = Instantiate(nail, pos, transform.rotation);
-                nails.transform.parent = transform;
+                nails.transform.parent = nailList.transform;
 
             }
         }

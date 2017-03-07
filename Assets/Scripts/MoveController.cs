@@ -98,27 +98,22 @@ public class MoveController : MonoBehaviour
         //平面法向量就是竖直方向,正常处理跳跃和自由下落
         if(Vector3.Dot(Vector3.up, _fallNormal)/Vector3.up.magnitude*_fallNormal.magnitude == Mathf.Cos(0))
         {
-            Debug.Log("1");
-
             move += vertical;
         }
         //竖直方向与平面法向量夹角大于slopeAngelLimit,开始下滑
         else if (Vector3.Dot(Vector3.up,_fallNormal) / Vector3.up.magnitude * _fallNormal.magnitude < Mathf.Cos(slopeAngelLimit / 180 * Mathf.PI))
         {
-            Debug.Log("2");
             move = vertical;
         }
         //竖直方向与平面法向量夹角小于slopeAngelLimit,忽略下落
         else
         {
-            Debug.Log("3");
             if (Vector3.Dot(vertical,Vector3.down) >= 0)
             {
                 vertical = Vector3.zero;
             }
             move += vertical;
         }
-        Debug.Log(move);
         moveCharacter(move);
         updateAnimator();
         rotateCharacter();

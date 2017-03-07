@@ -4,17 +4,11 @@ using UnityEngine;
 
 public class UpDownCircle : MonoBehaviour
 {
-<<<<<<< HEAD
     public float moveSpeed = 6;
     public float bottomPosition = -16.25f;
     public float topPosition = -8.75f;
     public float pauseAtBotton = 0;
     public float pauseAtTop = 0;
-=======
-    private float _moveSpeed = 6;
-    public float _bottomPosition = -16.25f;
-    public float _topPosition = -8.75f;
->>>>>>> ba401d3991d92af7fc6d4e9b1ee56ffa8957af1f
     private Vector3 _moveVec;
     private bool _ismoving = true;
     private bool _atBottom = false;
