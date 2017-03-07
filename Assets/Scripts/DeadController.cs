@@ -6,7 +6,11 @@ public class DeadController : MonoBehaviour {
 
     public List<GameObject> checkPoint;
 
+<<<<<<< HEAD
     private int _checkPointIndex = 5;
+=======
+    private int _checkPointIndex = 1;
+>>>>>>> ba401d3991d92af7fc6d4e9b1ee56ffa8957af1f
 
     private void Start()
     {
