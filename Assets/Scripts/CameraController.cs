@@ -12,10 +12,12 @@ public class CameraController : MonoBehaviour {
     private float _distance = 4;
     private float _theta = -90;
     private float _phi = 10;
+    private Vector3 _pos;
+    private Vector3 _direction;
 	// Use this for initialization
 	void Start () {
         
-        transform.position = caclCameraPosition();
+        transform.position = getCameraPosition();
         transform.LookAt(target.transform);
     }
 	
@@ -24,13 +26,11 @@ public class CameraController : MonoBehaviour {
 
         if(Input.GetAxis("Mouse ScrollWheel") > 0)
         {
-            Debug.Log(_distance);
             _distance -= 0.1f * cameraMoveSpeed;
             if (_distance < MIN_DISTANCE) _distance = MIN_DISTANCE;
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0)
         {
-            Debug.Log(_distance);
             _distance += 0.1f * cameraMoveSpeed;
             if (_distance > MAX_DISTANCE) _distance = MAX_DISTANCE;
         }
@@ -48,15 +48,40 @@ public class CameraController : MonoBehaviour {
             _theta = -90;
             _phi = 10;
         }
-        transform.position = caclCameraPosition();
+
+        transform.position = getCameraPosition();
         transform.LookAt(target.transform);
     }
 
     Vector3 caclCameraPosition()
-    {
+    {                                          
         float x = _distance * Mathf.Cos(Mathf.PI / 180 * _phi) * Mathf.Cos(Mathf.PI / 180 * _theta);
         float y = _distance * Mathf.Sin(Mathf.PI / 180 * _phi);
         float z = _distance * Mathf.Cos(Mathf.PI / 180 * _phi) * Mathf.Sin(Mathf.PI / 180 * _theta);
         return target.transform.TransformPoint(new Vector3(x, y, z));
+    }
+
+    //防止穿墙
+    Vector3 fixedCameraPosition(Vector3 pos)
+    {
+        RaycastHit hitInfo;
+        if(Physics.Raycast(target.transform.position, pos - target.transform.position ,out hitInfo,_distance))
+        {
+            return hitInfo.point + hitInfo.normal * 0.2f;
+        }
+
+        return pos;
+    }
+
+    Vector3 getCameraPosition()
+    {
+        var pos = caclCameraPosition();
+        pos = fixedCameraPosition(pos);
+        return pos;
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(target.transform.position, _direction);
     }
 }

@@ -7,7 +7,6 @@ public class LeftRightCircle : MonoBehaviour
     public float _moveSpeed = 8;
     public float _leftPosition = -16.25f;
     public float _rightPosition = -8.75f;
-    private float _startTime;
     private Vector3 _moveVec;
     private bool _ismoving = true;
     private bool _atLeft = false;
@@ -58,6 +57,5 @@ public class LeftRightCircle : MonoBehaviour
     void DoActivateTrigger()
     {
         _ismoving = true;
-        _startTime = Time.time;
     }
 }
