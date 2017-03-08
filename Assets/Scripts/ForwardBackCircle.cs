@@ -14,7 +14,7 @@ public class ForwardBackCircle : MonoBehaviour
     private bool _atForward = false;
     private Transform _targetParent;
     private Vector3 _targetSourceScale;
-    private float _pause = 0;
+    private bool _isPause = false;
     // Use this for initialization
     void Start()
     {
@@ -29,11 +29,8 @@ public class ForwardBackCircle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_pause > 0)
-        {
-            _pause -= Time.deltaTime;
-            return;
-        }
+        if (_isPause) return;
+        
         if (_atForward)
         {
             moveToBack();
@@ -75,12 +72,19 @@ public class ForwardBackCircle : MonoBehaviour
 
     void doPauseAtForward()
     {
-        _pause = pauseAtForward;
+        StartCoroutine(movePause(pauseAtForward));
     }
 
     void doPauseAtBack()
     {
-        _pause = pauseAtBack;
+        StartCoroutine(movePause(pauseAtBack));
+    }
+
+    IEnumerator movePause(float seconds)
+    {
+        _isPause = true;
+        yield return new WaitForSeconds(seconds);
+        _isPause = false;
     }
 
     void DoActivateTrigger()

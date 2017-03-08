@@ -14,7 +14,7 @@ public class UpDownCircle : MonoBehaviour
     private bool _atBottom = false;
     private Transform _targetParent;
     private Vector3 _targetSourceScale;
-    private float _pause = 0;
+    private bool _isPause = false;
     // Use this for initialization
     void Start()
     {
@@ -24,11 +24,8 @@ public class UpDownCircle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(_pause > 0)
-        {
-            _pause -= Time.deltaTime;
-            return;
-        }
+        if(_isPause) return;
+
         if (_atBottom)
         {
             moveToTop();
@@ -70,12 +67,19 @@ public class UpDownCircle : MonoBehaviour
 
     void doPauseAtBottom()
     {
-        _pause = pauseAtBotton;
+        StartCoroutine(movePause(pauseAtBotton));
     }
 
     void doPauseAtTop()
     {
-        _pause = pauseAtTop;
+        StartCoroutine(movePause(pauseAtTop));
+    }
+
+    IEnumerator movePause(float seconds)
+    {
+        _isPause = true;
+        yield return new WaitForSeconds(seconds);
+        _isPause = false;
     }
 
     void DoActivateTrigger()

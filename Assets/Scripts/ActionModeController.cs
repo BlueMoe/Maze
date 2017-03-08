@@ -94,7 +94,6 @@ public class ActionModeController : MonoBehaviour {
 
     void removeCharacterControllerMode()
     {
-        
         Destroy(_capsuleCollider);
         _charactConroller = null;
     }

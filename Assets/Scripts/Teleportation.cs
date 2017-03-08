@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Teleportation : MonoBehaviour
@@ -6,15 +7,30 @@ public class Teleportation : MonoBehaviour
     public Material phantomMaterial;
     public GameObject Ambra;
     public UIRoot mpBarRoot;
-    private float _teleportCDing;
+    public float _mpMax = 100;
+
+    private bool _isTeleportCountDown = false;
     private float _teleportCDTime = 8;
     private float _mp;
-    public float _mpMax = 100;
     private float _mpCastSpeed = 50;
     private float _mpRegenSpeed = 20;
     private float _normalSpeed;
     private float _fastRatio = 1.5f;
     private bool _isFastMode = false;
+
+    public float getMp()
+    {
+        return _mp;
+    }
+    public float getMaxMp()
+    {
+        return _mpMax;
+    }
+    public bool getCD()
+    {
+        return _isTeleportCountDown;
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -26,19 +42,15 @@ public class Teleportation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyUp   (KeyCode.F))
+        if (_isTeleportCountDown)
+        {
+            mpReginInCDTime();
+            return;
+        }
+        if (Input.GetKeyUp(KeyCode.F))
         {
             _isFastMode = !_isFastMode;
         }
-
-
-        if (_teleportCDing > 0)
-        {
-            mpReginInCDTime();
-            speedDown();
-            return;
-        }
-
         if(_isFastMode)
         {
             mpCast();
@@ -46,7 +58,7 @@ public class Teleportation : MonoBehaviour
             createPhantom();
             if(_mp <= 0)
             {
-                _teleportCDing = _teleportCDTime;
+                setTeleportCountDown(_teleportCDTime);
             }
         }
         else
@@ -92,7 +104,6 @@ public class Teleportation : MonoBehaviour
 
     void mpReginInCDTime()
     {
-        _teleportCDing -= Time.deltaTime;
         _mp += Time.deltaTime * _mpMax / _teleportCDTime;
         _mp = Mathf.Clamp(_mp, 0, _mpMax);
     }
@@ -100,16 +111,19 @@ public class Teleportation : MonoBehaviour
     {
         _mp -= Time.deltaTime * _mpCastSpeed;
     }
-    public float getMp()
+
+    void setTeleportCountDown(float seconds)
     {
-        return _mp;
+        _isFastMode = false;
+        speedDown();
+        StartCoroutine(TeleportCountDown(seconds));
     }
-    public float getMaxMp()
+
+    IEnumerator TeleportCountDown(float seconds)
     {
-        return _mpMax;
+        _isTeleportCountDown = true;
+        yield return new WaitForSeconds(seconds);
+        _isTeleportCountDown = false;
     }
-    public float getCD()
-    {
-        return _teleportCDing;
-    }
+   
 }

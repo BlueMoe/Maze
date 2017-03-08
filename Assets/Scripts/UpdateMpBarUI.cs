@@ -21,7 +21,7 @@ public class UpdateMpBarUI : MonoBehaviour {
 	void Update () {
         if(_teleportation == null) return;
         _mpBar.Set(_teleportation.getMp() / _teleportation.getMaxMp());
-        if (_teleportation.getCD() > 0)
+        if (_teleportation.getCD())
         { 
             _mpBar.foregroundWidget.color = _mpBarColorInCD;
         }
