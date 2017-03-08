@@ -191,7 +191,7 @@ public class MoveController : MonoBehaviour
             _moveNormal = Vector3.up;
 
         }
-        if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, groundCheckDistance + 0.3f))
+        if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, groundCheckDistance + 0.1f))
         {
             _fallNormal = hitInfo.normal;
         }
