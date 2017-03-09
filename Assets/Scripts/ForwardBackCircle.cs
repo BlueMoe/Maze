@@ -4,87 +4,58 @@ using UnityEngine;
 
 public class ForwardBackCircle : MonoBehaviour
 {
-    public float moveSpeed = 6;
+    //public float moveSpeed = 6;
+    //public float forwardPosition = -16.25f;
+    //public float backPosition = -8.75f;
+    //public float pauseAtForward = 0;
+    //public float pauseAtBack = 0;
+    //private Vector3 _moveVec;
+    //private bool _ismoving = true;
+    //private bool _atForward = false;
+    //private Transform _targetParent;
+    //private Vector3 _targetSourceScale;
+    //private bool _isPause = false;
+    // Use this for initialization
     public float forwardPosition = -16.25f;
     public float backPosition = -8.75f;
-    public float pauseAtForward = 0;
-    public float pauseAtBack = 0;
-    private Vector3 _moveVec;
+    private float cycleTime = 4;
     private bool _ismoving = true;
-    private bool _atForward = false;
     private Transform _targetParent;
     private Vector3 _targetSourceScale;
     private bool _isPause = false;
-    // Use this for initialization
+    private float _swing;
+    private float _omega;
+    private float _phi;
+    private float _originPosX;
+    private float _zeroX;
+    private float _t = 0;
+
     void Start()
     {
-        if(forwardPosition > backPosition)
+        if (forwardPosition > backPosition)
         {
             var temp = forwardPosition;
             forwardPosition = backPosition;
             backPosition = temp;
+            Debug.Log("change");
         }
+
+        _originPosX = transform.position.x;
+        _zeroX = (backPosition + forwardPosition) / 2;
+        _swing = (backPosition - forwardPosition) / 2;
+        _omega = Mathf.PI * 2 / cycleTime;
+        var x = _originPosX - _zeroX;
+        _phi = Mathf.Asin(Mathf.Clamp(x / _swing, -1, 1));
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (_isPause) return;
-        
-        if (_atForward)
-        {
-            moveToBack();
-        }
-        else
-        {
-            moveToForward();
-        }
-    }
-
-    void moveToBack()
-    {
-        GetComponent<Rigidbody>().velocity = new Vector3(moveSpeed, 0, 0);
-        transform.Translate(new Vector3(moveSpeed, 0, 0) * Time.deltaTime);
-        if (transform.position.x >= backPosition)
-        {
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
-            transform.position = new Vector3(backPosition, transform.position.y, transform.position.z);
-            _ismoving = false;
-            _atForward = false;
-            doPauseAtBack();
-        }
-    }
-
-    void moveToForward()
-    {
-        GetComponent<Rigidbody>().velocity = new Vector3(-moveSpeed, 0, 0);
-        transform.Translate(new Vector3(-moveSpeed, 0, 0) * Time.deltaTime);
-        if (transform.position.x <= forwardPosition)
-        {
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
-            transform.position = new Vector3(forwardPosition, transform.position.y, transform.position.z);
-            _ismoving = false;
-            _atForward = true;
-            doPauseAtForward();
-        }
-    }
-
-
-    void doPauseAtForward()
-    {
-        StartCoroutine(movePause(pauseAtForward));
-    }
-
-    void doPauseAtBack()
-    {
-        StartCoroutine(movePause(pauseAtBack));
-    }
-
-    IEnumerator movePause(float seconds)
-    {
-        _isPause = true;
-        yield return new WaitForSeconds(seconds);
-        _isPause = false;
+        var s = _swing * Mathf.Sin(_omega * _t + _phi);
+        var pos = transform.position;
+        pos.x = _zeroX + s;
+        transform.position = pos;
+        _t += Time.deltaTime;
     }
 
     void DoActivateTrigger()
