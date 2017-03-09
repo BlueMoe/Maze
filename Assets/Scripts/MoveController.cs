@@ -15,13 +15,15 @@ public class MoveController : MonoBehaviour
     private float _OrigGroundCheckDistance;
     private CharacterController _characterController;
     private ActionModeController _actionModeController;
+    private CapsuleCollider _collider;
     private float _JumpAmount;
     private ActionModeController.ActionMode _myMode;
     private Vector3 _relativeVelocity;
     private Vector3 _externalVelocity;
     private float _externalVelocityTime;
-    private Transform _parent;
     private float _airTime;
+    private float _radius = 0.3f;
+    private Vector3 _pos;
 
     public float moveSpeed = 5.0f;
     public float rotateSpeed = 90.0f;
@@ -45,8 +47,8 @@ public class MoveController : MonoBehaviour
         _myMode = _actionModeController.getActionMode();
         _animator = GetComponent<Animator>();
         _rigidBody = GetComponent<Rigidbody>();
+        _collider = GetComponent<CapsuleCollider>();
         _OrigGroundCheckDistance = groundCheckDistance;
-        _characterController = GetComponent<CharacterController>();
     }
 
     // Update is called once per frame
@@ -89,8 +91,8 @@ public class MoveController : MonoBehaviour
             if (_JumpAmount < -gravity*2) _JumpAmount = -gravity * 2;
         }
 
-        var moveDirection = new Vector3(0, 0, 1);
-        moveDirection = transform.TransformDirection(moveDirection);
+        var moveDirection = transform.forward;
+        //moveDirection = transform.TransformDirection(moveDirection);
         moveDirection = Vector3.ProjectOnPlane(moveDirection, _fallNormal).normalized;
         var move = moveDirection * _forwardAmount;
         var vertical = Vector3.up * _JumpAmount;
@@ -117,8 +119,7 @@ public class MoveController : MonoBehaviour
         moveCharacter(move);
         updateAnimator();
         rotateCharacter();
-
-        transform.parent = _parent;
+        fixedPosition();
     }
     void updateAnimator()
     {
@@ -210,6 +211,10 @@ public class MoveController : MonoBehaviour
         Gizmos.DrawLine(transform.position + transform.forward * 0.1f, transform.position + transform.forward * 0.1f + Vector3.down * (groundCheckDistance/4));
         Gizmos.DrawLine(transform.position + transform.right * -0.1f, transform.position + transform.right * -0.1f + Vector3.down * (groundCheckDistance / 4));
         Gizmos.DrawLine(transform.position + transform.right * 0.1f, transform.position + transform.right * 0.1f + Vector3.down * (groundCheckDistance / 4));
+        if(_collider != null)
+            Gizmos.DrawWireSphere(transform.position + transform.up * 0.5f, _radius);
+        if(_pos != null)
+            Gizmos.DrawWireSphere(_pos, _radius);
     }
 
 
@@ -221,27 +226,7 @@ public class MoveController : MonoBehaviour
     void moveCharacter(Vector3 move)
     {
 
-        var curMode = _actionModeController.getActionMode();
-        if (_myMode != curMode)
-        {
-            //在模式切换后,部分组件已经被删除 初始化_characterController或_rigidBody的值
-            _myMode = curMode;
-            if (curMode == ActionModeController.ActionMode.CHARACTERCONTROLLERMODE)
-            {
-                _characterController = GetComponent<CharacterController>();
-            }
-            else if (curMode == ActionModeController.ActionMode.RIGIDBODYMODE)
-            {
-                _rigidBody = GetComponent<Rigidbody>();
-            }
-        }
-
-        //角色控制器模式和刚体模式使用不同的移动方式
-        if (_myMode == ActionModeController.ActionMode.CHARACTERCONTROLLERMODE)
-        {
-            _characterController.Move(move * Time.deltaTime);
-        }
-        else if (_myMode == ActionModeController.ActionMode.RIGIDBODYMODE)
+        if (_myMode == ActionModeController.ActionMode.RIGIDBODYMODE)
         {
             _rigidBody.velocity = move;
             _rigidBody.velocity += _relativeVelocity;
@@ -255,20 +240,101 @@ public class MoveController : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    //对角色的坐标进行补正,避免穿墙
+    void fixedPosition()
     {
-        _rigidBody.velocity = Vector3.zero;
+        foreach(Collider col in Physics.OverlapSphere(transform.position + transform.up*0.5f, _radius))
+        {
+            Vector3 contactPoint = Vector3.zero;
+
+            if (col.isTrigger == true) continue;
+
+            if (col is BoxCollider)
+            {
+                contactPoint = ClosestPointOn((BoxCollider)col, transform.position);
+            }
+            else if (col is SphereCollider)
+            {
+                contactPoint = ClosestPointOn((SphereCollider)col, transform.position);
+            }
+            else if (col is MeshCollider)
+            {
+                contactPoint = ClosestPointOn((MeshCollider)col, transform.position);
+            }
+
+            Vector3 v = transform.position - contactPoint;
+
+            _pos = contactPoint;
+
+            transform.position += Vector3.ClampMagnitude(v, Mathf.Clamp(_radius - v.magnitude, 0, _radius));
+
+        }
     }
-    void OnCollisionStay(Collision collision)
+
+    Vector3 ClosestPointOn(BoxCollider collider, Vector3 to)
     {
-        if (collision.rigidbody != null)
-            _relativeVelocity = collision.rigidbody.velocity;
+        if (collider.transform.rotation == Quaternion.identity)
+        {
+            return collider.ClosestPointOnBounds(to);
+        }
+        //因为ClosestPointOnBounds是依据AABB来计算最近点的,当局部坐标轴与世界坐标轴不重合的时候只能通过OBB来计算最近的补正点
+        return closestPointOnOBB(collider, to);
     }
-    void OnCollisionExit(Collision collision)
+
+    Vector3 ClosestPointOn(SphereCollider collider, Vector3 to)
     {
-        _relativeVelocity = Vector3.zero;
+        Vector3 p;
+        //球型碰撞盒球心到目标的方向向量
+        p = to - collider.transform.position;
+        p.Normalize();
+        //球型碰撞盒球心到球面上点的坐标
+        p *= collider.radius * collider.transform.localScale.x;
+        p += collider.transform.position;
+
+        return p;
     }
-    void OnControllerColliderHit(ControllerColliderHit col)
+
+    Vector3 ClosestPointOn(MeshCollider collider, Vector3 to)
     {
+        return collider.ClosestPointOnBounds(to);
     }
+
+    //计算物体的OBB表面最近的点
+    Vector3 closestPointOnOBB(BoxCollider collider, Vector3 to)
+    {	
+        var ct = collider.transform;
+	
+        //把目标点的坐标转成碰撞盒的局部坐标
+        var local = ct.InverseTransformPoint(to);
+		
+        //碰撞盒中心到目标点的向量
+        local -= collider.center;
+	
+        //把中心到目标的向量限制在包围盒内
+        var localNorm = new Vector3(
+        Mathf.Clamp(local.x, -collider.size.x * 0.5f, collider.size.x * 0.5f),
+        Mathf.Clamp(local.y, -collider.size.y * 0.5f, collider.size.y * 0.5f),
+        Mathf.Clamp(local.z, -collider.size.z * 0.5f, collider.size.z * 0.5f));
+	    
+        localNorm += collider.center;
+	
+        return ct.TransformPoint(localNorm);
+    }
+
+    //void OnCollisionEnter(Collision collision)
+    //{
+    //    _rigidBody.velocity = Vector3.zero;
+    //}
+    //void OnCollisionStay(Collision collision)
+    //{
+    //    if (collision.rigidbody != null)
+    //        _relativeVelocity = collision.rigidbody.velocity;
+    //}
+    //void OnCollisionExit(Collision collision)
+    //{
+    //    _relativeVelocity = Vector3.zero;
+    //}
+    //void OnControllerColliderHit(ControllerColliderHit col)
+    //{
+    //}
 }
