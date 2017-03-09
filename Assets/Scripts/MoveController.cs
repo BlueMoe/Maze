@@ -20,7 +20,7 @@ public class MoveController : MonoBehaviour
     private ActionModeController.ActionMode _myMode;
     private Vector3 _relativeVelocity;
     private Vector3 _externalVelocity;
-    private float _externalVelocityTime;
+    private bool _hasExternalVelocity;
     private float _airTime;
     private float _radius = 0.3f;
     private Vector3 _pos;
@@ -32,10 +32,10 @@ public class MoveController : MonoBehaviour
     public float gravity = 20.0f;
     public float slopeAngelLimit = 80;
 
-    public void setExternalVelocity(Vector3 v, float seconds)
+    public void setExternalVelocity(Vector3 v)
     {
         _externalVelocity = v;
-        _externalVelocityTime = seconds;
+        _hasExternalVelocity = true;
     }
 
 
@@ -230,12 +230,10 @@ public class MoveController : MonoBehaviour
         {
             _rigidBody.velocity = move;
             _rigidBody.velocity += _relativeVelocity;
-            if (_externalVelocityTime > 0)
+            if (_hasExternalVelocity)
             {
                 _rigidBody.velocity += _externalVelocity;
                 _rigidBody.velocity = new Vector3(_rigidBody.velocity.x, 0, _rigidBody.velocity.z);
-                _externalVelocityTime -= Time.deltaTime;
-
             }
         }
     }
@@ -323,7 +321,7 @@ public class MoveController : MonoBehaviour
 
     //void OnCollisionEnter(Collision collision)
     //{
-    //    _rigidBody.velocity = Vector3.zero;
+    //    _hasExternalVelocity = false;
     //}
     //void OnCollisionStay(Collision collision)
     //{

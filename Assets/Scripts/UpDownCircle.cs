@@ -42,7 +42,6 @@ public class UpDownCircle : MonoBehaviour
         transform.Translate(new Vector3(0, moveSpeed, 0) * Time.deltaTime);
         if (transform.position.y >= topPosition)
         {
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
             transform.position = new Vector3(transform.position.x,topPosition,transform.position.z);
             _ismoving = false;
             _atBottom = false;
@@ -56,7 +55,6 @@ public class UpDownCircle : MonoBehaviour
         transform.Translate(new Vector3(0, -moveSpeed, 0) * Time.deltaTime);
         if (transform.position.y <= bottomPosition)
         {
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
             transform.position = new Vector3(transform.position.x, bottomPosition, transform.position.z);
             _ismoving = false;
             _atBottom = true;
