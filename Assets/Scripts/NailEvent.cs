@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class NailEvent : MonoBehaviour {
 
+    private CameraController cameraController;
+
 	// Use this for initialization
 	void Start () {
-		
-	}
+        cameraController = Camera.main.GetComponent<CameraController>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -20,6 +22,11 @@ public class NailEvent : MonoBehaviour {
         if (Ambra)
         {
             Ambra.die();
+            if(cameraController)
+            {
+                cameraController.reset();
+            }
+            
         }
     }
 }

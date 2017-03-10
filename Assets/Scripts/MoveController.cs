@@ -1,29 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class MoveController : MonoBehaviour
 {
-
-    private Animator _animator;
-    private Rigidbody _rigidBody;
-    private float _forwardAmount;
-    private float _turnAmount;
-    private bool _isGrounded;
-    private Vector3 _moveNormal;
-    private Vector3 _fallNormal;
-    private float _OrigGroundCheckDistance;
-    private CharacterController _characterController;
-    private ActionModeController _actionModeController;
-    private CapsuleCollider _collider;
-    private float _JumpAmount;
-    private ActionModeController.ActionMode _myMode;
-    private Vector3 _relativeVelocity;
-    private Vector3 _externalVelocity;
-    private bool _hasExternalVelocity;
-    private float _airTime;
-    private float _radius = 0.3f;
-    private Vector3 _pos;
 
     public float moveSpeed = 5.0f;
     public float rotateSpeed = 90.0f;
@@ -32,14 +13,33 @@ public class MoveController : MonoBehaviour
     public float gravity = 20.0f;
     public float slopeAngelLimit = 80;
 
+    private Animator _animator;
+    private ActionModeController _actionModeController;
+    private ActionModeController.ActionMode _myMode;
+    private bool _hasExternalVelocity;
+    private bool _isGrounded;
+    private float _forwardAmount;
+    private float _turnAmount;
+    private float _OrigGroundCheckDistance;
+    private float _JumpAmount;
+    private float _airTime;
+    private float _radius = 0.3f;
+    private CapsuleCollider _collider;
+    private CharacterController _characterController;
+    private Rigidbody _rigidBody;
+    private Vector3 _fallNormal;
+    private Vector3 _moveNormal;
+    private Vector3 _relativeVelocity;
+    private Vector3 _externalVelocity;
+    private Vector3 _pos;
+    private Transform _camera;
+
     public void setExternalVelocity(Vector3 v)
     {
         _externalVelocity = v;
         _hasExternalVelocity = true;
     }
 
-
-    // Use this for initialization
     void Start()
     {
         _actionModeController = GetComponent<ActionModeController>();
@@ -49,36 +49,29 @@ public class MoveController : MonoBehaviour
         _rigidBody = GetComponent<Rigidbody>();
         _collider = GetComponent<CapsuleCollider>();
         _OrigGroundCheckDistance = groundCheckDistance;
+        _camera = Camera.main.transform;
+
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         _forwardAmount = 0;
         _turnAmount = 0;
         _isGrounded = true;
 
-        if (Input.GetKey(KeyCode.W))
-        {
-            _forwardAmount = moveSpeed;
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            _forwardAmount = -moveSpeed / 2;
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            _turnAmount = -rotateSpeed;
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            _turnAmount = rotateSpeed;
-        }
+        float h = CrossPlatformInputManager.GetAxis("Horizontal");
+        float v = CrossPlatformInputManager.GetAxis("Vertical");
+
+        var forward = Vector3.ProjectOnPlane(_camera.forward, Vector3.up).normalized * v;
+        var right = Vector3.ProjectOnPlane(_camera.right, Vector3.up).normalized * h;
+
+        var moveDirection = forward + right;
+
         checkGrounded();
 
         if (_isGrounded)
         {
-            _JumpAmount = -0.1f;
+            _JumpAmount = 0;
             if (Input.GetKey(KeyCode.Space))
             {
                 _airTime += 0.1f;
@@ -91,10 +84,8 @@ public class MoveController : MonoBehaviour
             if (_JumpAmount < -gravity*2) _JumpAmount = -gravity * 2;
         }
 
-        var moveDirection = transform.forward;
-        //moveDirection = transform.TransformDirection(moveDirection);
-        moveDirection = Vector3.ProjectOnPlane(moveDirection, _fallNormal).normalized;
-        var move = moveDirection * _forwardAmount;
+        moveDirection = Vector3.ProjectOnPlane(moveDirection, _fallNormal).normalized * moveDirection.magnitude;
+        var move = moveDirection * moveSpeed;// * _forwardAmount;
         var vertical = Vector3.up * _JumpAmount;
 
         //平面法向量就是竖直方向,正常处理跳跃和自由下落
@@ -117,20 +108,12 @@ public class MoveController : MonoBehaviour
             move += vertical;
         }
         moveCharacter(move);
-        updateAnimator();
-        rotateCharacter();
+        updateAnimator(move);
         fixedPosition();
     }
-    void updateAnimator()
+    void updateAnimator(Vector3 move)
     {
-        if (_forwardAmount >= 0)
-        {
-            _animator.SetFloat("Forward", _forwardAmount);
-        }
-        else
-        {
-            _animator.SetFloat("Forward", 0.5f);
-        }
+        _animator.SetFloat("Forward", move.magnitude);
         if(_airTime > 0.1 && _fallNormal == Vector3.up)
         { 
             _animator.SetBool("OnGround", false);
@@ -144,7 +127,7 @@ public class MoveController : MonoBehaviour
             _animator.SetFloat("Jump", _JumpAmount);
         }
         float runCycle = Mathf.Repeat(_animator.GetCurrentAnimatorStateInfo(0).normalizedTime + 0.2f, 1);
-        float jumpLeg = (runCycle < 0.5 ? 1 : -1) * _forwardAmount;
+        float jumpLeg = (runCycle < 0.5 ? 1 : -1) * move.magnitude;
         if (_isGrounded)
         {
             _animator.SetFloat("JumpLeg", jumpLeg);
@@ -226,6 +209,11 @@ public class MoveController : MonoBehaviour
     void moveCharacter(Vector3 move)
     {
 
+        if (Vector3.ProjectOnPlane(move,Vector3.up).magnitude > 0)
+        {
+            var rotateAngle = Mathf.Atan2(move.z, move.x) * 180 / Mathf.PI;
+            transform.eulerAngles = new Vector3(0, 90 - rotateAngle, 0);
+        }
         if (_myMode == ActionModeController.ActionMode.RIGIDBODYMODE)
         {
             _rigidBody.velocity = move;
@@ -318,21 +306,4 @@ public class MoveController : MonoBehaviour
 	
         return ct.TransformPoint(localNorm);
     }
-
-    //void OnCollisionEnter(Collision collision)
-    //{
-    //    _hasExternalVelocity = false;
-    //}
-    //void OnCollisionStay(Collision collision)
-    //{
-    //    if (collision.rigidbody != null)
-    //        _relativeVelocity = collision.rigidbody.velocity;
-    //}
-    //void OnCollisionExit(Collision collision)
-    //{
-    //    _relativeVelocity = Vector3.zero;
-    //}
-    //void OnControllerColliderHit(ControllerColliderHit col)
-    //{
-    //}
 }

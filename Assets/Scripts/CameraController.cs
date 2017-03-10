@@ -10,13 +10,14 @@ public class CameraController : MonoBehaviour {
     public float cameraRotateSpeed = 0.1f;
     public float cameraMoveSpeed = 3;
     private float _distance = 4;
-    private float _theta = -90;
-    private float _phi = 10;
+    private float _theta;
+    private float _phi;
     private Vector3 _pos;
     private Vector3 _direction;
 	// Use this for initialization
 	void Start () {
-        
+        _theta = target.transform.rotation.y + 90;
+        _phi = 10;
         transform.position = getCameraPosition();
         transform.LookAt(target.transform);
     }
@@ -45,7 +46,7 @@ public class CameraController : MonoBehaviour {
         }
         if(Input.GetMouseButton(1))
         {
-            _theta = -90;
+            _theta = 180;
             _phi = 10;
         }
 
@@ -58,7 +59,9 @@ public class CameraController : MonoBehaviour {
         float x = _distance * Mathf.Cos(Mathf.PI / 180 * _phi) * Mathf.Cos(Mathf.PI / 180 * _theta);
         float y = _distance * Mathf.Sin(Mathf.PI / 180 * _phi);
         float z = _distance * Mathf.Cos(Mathf.PI / 180 * _phi) * Mathf.Sin(Mathf.PI / 180 * _theta);
-        return target.transform.TransformPoint(new Vector3(x, y, z));
+        var pos = target.transform.position;
+        return pos + new Vector3(x, y, z);
+        //return target.transform.TransformPoint(new Vector3(x, y, z));
     }
 
     //防止穿墙
@@ -78,6 +81,12 @@ public class CameraController : MonoBehaviour {
         var pos = caclCameraPosition();
         pos = fixedCameraPosition(pos);
         return pos;
+    }
+
+    public void reset()
+    {
+        _theta = target.transform.rotation.y + 90;
+        _phi = 10;
     }
 
     void OnDrawGizmos()

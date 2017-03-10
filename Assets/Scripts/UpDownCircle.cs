@@ -26,7 +26,6 @@ public class UpDownCircle : MonoBehaviour
             var temp = bottomPosition;
             bottomPosition = topPosition;
             topPosition = temp;
-            Debug.Log("change");
         }
 
         _originPosY = transform.position.y;

@@ -4,21 +4,9 @@ using UnityEngine;
 
 public class ForwardBackCircle : MonoBehaviour
 {
-    //public float moveSpeed = 6;
-    //public float forwardPosition = -16.25f;
-    //public float backPosition = -8.75f;
-    //public float pauseAtForward = 0;
-    //public float pauseAtBack = 0;
-    //private Vector3 _moveVec;
-    //private bool _ismoving = true;
-    //private bool _atForward = false;
-    //private Transform _targetParent;
-    //private Vector3 _targetSourceScale;
-    //private bool _isPause = false;
-    // Use this for initialization
     public float forwardPosition = -16.25f;
     public float backPosition = -8.75f;
-    private float cycleTime = 4;
+    public float cycleTime = 4;
     private bool _ismoving = true;
     private Transform _targetParent;
     private Vector3 _targetSourceScale;
@@ -37,7 +25,6 @@ public class ForwardBackCircle : MonoBehaviour
             var temp = forwardPosition;
             forwardPosition = backPosition;
             backPosition = temp;
-            Debug.Log("change");
         }
 
         _originPosX = transform.position.x;

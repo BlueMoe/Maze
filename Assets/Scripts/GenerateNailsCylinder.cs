@@ -11,8 +11,8 @@ public class GenerateNailsCylinder : MonoBehaviour {
 
     private float _radius;
     private float _height;
-    private float _rowWidth = Mathf.PI/20;
-    private float _colWidth = 0.2f;
+    private float _rowWidth = Mathf.PI/10;
+    private float _colWidth = 0.5f;
 
     // Use this for initialization
     void Start () {
