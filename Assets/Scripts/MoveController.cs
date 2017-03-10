@@ -72,7 +72,7 @@ public class MoveController : MonoBehaviour
         if (_isGrounded)
         {
             _JumpAmount = 0;
-            if (Input.GetKey(KeyCode.Space))
+            if (CrossPlatformInputManager.GetButton("Jump"))
             {
                 _airTime += 0.1f;
                 _JumpAmount += jumpPower;

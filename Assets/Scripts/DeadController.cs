@@ -6,7 +6,7 @@ public class DeadController : MonoBehaviour {
 
     public List<GameObject> checkPoint;
 
-    private int _checkPointIndex = 5;
+    private int _checkPointIndex = 6;
 
     private void Start()
     {

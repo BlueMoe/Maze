@@ -13,6 +13,7 @@ public class GenerateNailsCylinder : MonoBehaviour {
     private float _height;
     private float _rowWidth = Mathf.PI/10;
     private float _colWidth = 0.5f;
+    private float _scale = 1;
 
     // Use this for initialization
     void Start () {
@@ -55,11 +56,12 @@ public class GenerateNailsCylinder : MonoBehaviour {
                 var centralAngle = i * _rowWidth / _radius;
                 var x = Mathf.Sin(centralAngle) * _radius;
                 var z = Mathf.Cos(centralAngle) * _radius;
-                var y = j * _colWidth;
+                var y = (j + 1) * _colWidth;
                 var pos = nailList.transform.TransformPoint(new Vector3(x,y,z));
                 var nails = Instantiate(nail, pos, transform.rotation);
                 nails.transform.parent = nailList.transform;
                 nails.transform.eulerAngles = new Vector3(90, 0,  -centralAngle*180/Mathf.PI);
+                nails.transform.localScale = new Vector3(_scale, _scale, _scale);
             }
         }
 

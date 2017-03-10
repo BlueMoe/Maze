@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class CameraController : MonoBehaviour {
 
@@ -7,17 +8,16 @@ public class CameraController : MonoBehaviour {
     const float MIN_DISTANCE = 1;
 
     public GameObject target;
-    public float cameraRotateSpeed = 0.1f;
+    public float cameraRotateSpeed = 30;
     public float cameraMoveSpeed = 3;
-    private float _distance = 4;
+    private float _distance = 3;
     private float _theta;
     private float _phi;
     private Vector3 _pos;
     private Vector3 _direction;
 	// Use this for initialization
 	void Start () {
-        _theta = target.transform.rotation.y + 90;
-        _phi = 10;
+        resetAngel();
         transform.position = getCameraPosition();
         transform.LookAt(target.transform);
     }
@@ -36,14 +36,27 @@ public class CameraController : MonoBehaviour {
             if (_distance > MAX_DISTANCE) _distance = MAX_DISTANCE;
         }
 
-        if (Input.GetMouseButton(0))
+        float x;
+        float y;
+        if(Input.GetMouseButton(0))
         {
-            var x = Input.GetAxis("Mouse X");
-            var y = Input.GetAxis("Mouse Y");
-            _theta -= x * cameraRotateSpeed;
-            _phi -= y * cameraRotateSpeed;
-            _phi = Mathf.Clamp(_phi, -89, 89);
+            x = CrossPlatformInputManager.GetAxis("MouseRightHorizontal");
+            y = CrossPlatformInputManager.GetAxis("MouseRightVertical");
+            x *= cameraRotateSpeed / 3;
+            y *= cameraRotateSpeed / 3;
         }
+        else
+        {
+            
+
+            x = CrossPlatformInputManager.GetAxis("RightHorizontal");
+            y = CrossPlatformInputManager.GetAxis("RightVertical");
+            x *= cameraRotateSpeed;
+            y *= -cameraRotateSpeed;
+        }
+        _theta -= x;
+        _phi -= y;
+        _phi = Mathf.Clamp(_phi, -89, 89);
         if(Input.GetMouseButton(1))
         {
             _theta = 180;
@@ -83,9 +96,11 @@ public class CameraController : MonoBehaviour {
         return pos;
     }
 
-    public void reset()
+    public void resetAngel()
     {
-        _theta = target.transform.rotation.y + 90;
+        var targetForward = target.transform.parent.transform.forward;
+        _theta = Mathf.Acos(Vector3.Dot(Vector3.forward, targetForward) /(targetForward.magnitude*Vector3.forward.magnitude)) * 180 / Mathf.PI;
+        _theta = _theta - 90;
         _phi = 10;
     }
 

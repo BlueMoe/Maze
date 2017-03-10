@@ -24,7 +24,7 @@ public class NailEvent : MonoBehaviour {
             Ambra.die();
             if(cameraController)
             {
-                cameraController.reset();
+                cameraController.resetAngel();
             }
             
         }

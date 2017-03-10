@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class Teleportation : MonoBehaviour
 {
@@ -47,7 +48,8 @@ public class Teleportation : MonoBehaviour
             mpReginInCDTime();
             return;
         }
-        if (Input.GetKeyUp(KeyCode.F))
+        
+        if (CrossPlatformInputManager.GetButtonUp("FastMode"))
         {
             _isFastMode = !_isFastMode;
         }
