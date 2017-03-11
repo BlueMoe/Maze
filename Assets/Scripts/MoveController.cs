@@ -34,10 +34,9 @@ public class MoveController : MonoBehaviour
     private Vector3 _pos;
     private Transform _camera;
 
-    public void setExternalVelocity(Vector3 v)
+    public void addExternalVelocity(Vector3 v)
     {
-        _externalVelocity = v;
-        _hasExternalVelocity = true;
+        _externalVelocity += v;
     }
 
     void Start()
@@ -96,6 +95,7 @@ public class MoveController : MonoBehaviour
         //竖直方向与平面法向量夹角大于slopeAngelLimit,开始下滑
         else if (Vector3.Dot(Vector3.up,_fallNormal) / Vector3.up.magnitude * _fallNormal.magnitude < Mathf.Cos(slopeAngelLimit / 180 * Mathf.PI))
         {
+            vertical = Vector3.ProjectOnPlane(Vector3.down, _fallNormal).normalized * gravity;
             move = vertical;
         }
         //竖直方向与平面法向量夹角小于slopeAngelLimit,忽略下落
@@ -110,6 +110,7 @@ public class MoveController : MonoBehaviour
         moveCharacter(move);
         updateAnimator(move);
         fixedPosition();
+        _externalVelocity = Vector3.zero;
     }
     void updateAnimator(Vector3 move)
     {
