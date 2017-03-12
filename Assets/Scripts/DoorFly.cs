@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DoorFly : MonoBehaviour {
 
-    private float _force = 75;
+    private float _force = 80;
 	// Use this for initialization
 	void Start () {
 		
