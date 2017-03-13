@@ -16,7 +16,7 @@ public class Teleportation : MonoBehaviour
     private float _mpCastSpeed = 50;
     private float _mpRegenSpeed = 20;
     private float _normalSpeed;
-    private float _fastRatio = 1.5f;
+    private float _fastRatio = 1.2f;
     private bool _isFastMode = false;
 
     public float getMp()
