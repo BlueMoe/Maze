@@ -33,7 +33,7 @@ public class MoveController : MonoBehaviour
     private Vector3 _pos;
     private Transform _camera;
     private bool _needRotateAmbra = true;
-
+    private float x = 0;
     public void addExternalVelocity(Vector3 v)
     {
         _externalVelocity += v;
@@ -74,7 +74,8 @@ public class MoveController : MonoBehaviour
 
         if (_isGrounded)
         {
-            _JumpAmount = -1;
+            x = 0;
+            _JumpAmount = 0;
             if (CrossPlatformInputManager.GetButton("Jump"))
             {
                 _airTime += 0.1f;
@@ -83,10 +84,12 @@ public class MoveController : MonoBehaviour
         }
         else
         {
+            x += Time.deltaTime;
             _JumpAmount -= gravity * Time.deltaTime;
             if (_JumpAmount < -gravity*2) _JumpAmount = -gravity * 2;
         }
 
+        Debug.Log(x);
         moveDirection = Vector3.ProjectOnPlane(moveDirection, _fallNormal).normalized * moveDirection.magnitude;
         var move = moveDirection * moveSpeed;// * _forwardAmount;
         var vertical = Vector3.up * _JumpAmount;
