@@ -18,12 +18,12 @@ public class BahamutTreasure : MonoBehaviour {
         transform.Rotate(Vector3.up * Time.deltaTime * _rotateSpeed);
 	}
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
-        if (Ambra == null) return;
-        if (collision.gameObject != Ambra) return;
         
-        if(_treasureManager != null)
+        if (Ambra == null) return;
+        if (other.gameObject != Ambra) return;
+        if (_treasureManager != null)
         {
             _treasureManager.collectTreasure();
             Destroy(gameObject);
