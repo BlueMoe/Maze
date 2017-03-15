@@ -68,9 +68,9 @@ public class MoveController : MonoBehaviour
 
         checkGrounded();
         checkMoveNormal();
-        //float v = CrossPlatformInputManager.GetAxis("Vertical");
-        float v = 1;
-        float h = 1;//CrossPlatformInputManager.GetAxis("Horizontal");
+        
+        float v = CrossPlatformInputManager.GetAxis("Vertical");
+        float h = CrossPlatformInputManager.GetAxis("Horizontal");
         var moveDirection = fixedMoveDirection(v,h);
 
         if (_isGrounded)
@@ -229,27 +229,12 @@ public class MoveController : MonoBehaviour
     {
         Vector3 forward = Vector3.ProjectOnPlane(_camera.forward, Vector3.up).normalized * v;
         Vector3 right = Vector3.ProjectOnPlane(_camera.right, Vector3.up).normalized * h;
-        Vector3 up ;
         var moveDirection = forward + right;
-        var dot = Vector3.Dot(Vector3.ProjectOnPlane(moveDirection, _moveNormal), Vector3.up);
 
         var theta = Mathf.Acos(Vector3.Dot(Vector3.up, _moveNormal) / (Vector3.up.magnitude * _moveNormal.magnitude));
-        if (dot > 0.01f)
-        {
-            up = Vector3.up;
-        }
-        else if ( dot < -0.01f)
-        {
-            up = Vector3.down;
-        }
-        else
-        {
-            up = Vector3.zero;
-        }
+        
+        moveDirection = Quaternion.AngleAxis(-theta * Mathf.Rad2Deg, Vector3.Cross(_moveNormal, Vector3.up)) * moveDirection;
 
-        up *= moveDirection.magnitude * Mathf.Tan(theta);
-        moveDirection += up;
-        debugMove = moveDirection;
         return moveDirection;
     }
 
