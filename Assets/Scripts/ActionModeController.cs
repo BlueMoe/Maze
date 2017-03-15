@@ -65,6 +65,7 @@ public class ActionModeController : MonoBehaviour {
         _rigidBody = Ambra.AddComponent<Rigidbody>();
         _rigidBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY |RigidbodyConstraints.FreezeRotationZ;
         _rigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        _rigidBody.useGravity = false;
 
         _capsuleCollider = Ambra.AddComponent<CapsuleCollider>();
         _capsuleCollider.material = new PhysicMaterial("Wood");
