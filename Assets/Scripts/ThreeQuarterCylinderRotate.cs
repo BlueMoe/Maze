@@ -40,6 +40,17 @@ public class ThreeQuarterCylinderRotate : MonoBehaviour
         var direction = coutact - transform.position;
         var distance = Mathf.Sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
         var linearVelocity = Vector3.Cross(transform.up, direction).normalized * Mathf.Deg2Rad * rotateSpeed * distance;
+
+        if (Vector3.Angle(linearVelocity, Vector3.up) < 45)
+        {
+            linearVelocity = Vector3.down * Mathf.Deg2Rad * rotateSpeed * distance;
+        }
+
+        if(distance < 3.8)
+        {
+            linearVelocity = Vector3.zero;
+        }
+
         _moveController.addExternalVelocity(linearVelocity);
         _prevLinearVelocity = linearVelocity;
     }

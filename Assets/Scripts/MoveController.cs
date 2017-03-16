@@ -38,6 +38,7 @@ public class MoveController : MonoBehaviour
     private Vector3 debugMoveNormal = Vector3.zero;
     private Vector3 _secondaryNormal;
     private float x = 0;
+    private float _slideSpeed = 0;
 
     public void addExternalVelocity(Vector3 v)
     {
@@ -68,45 +69,30 @@ public class MoveController : MonoBehaviour
 
         checkGrounded();
         checkMoveNormal();
-        
+
         float v = CrossPlatformInputManager.GetAxis("Vertical");
         float h = CrossPlatformInputManager.GetAxis("Horizontal");
         var moveDirection = fixedMoveDirection(v,h);
+        var move = moveDirection.normalized * moveSpeed;
+        move += checkJump();
 
-        if (_isGrounded)
+        moveCharacter(move);
+        updateAnimator(move,v,h);
+        fixedPosition();
+        
+    }
+    void updateAnimator(Vector3 move,float v,float h)
+    {
+        if(v == 0 && h == 0)
         {
-            _JumpAmount = 0;
-            _airTime = 0;
-            if (CrossPlatformInputManager.GetButton("Jump"))
-            {
-                _JumpAmount += jumpPower;
-            }
+            _animator.SetFloat("Forward", 0);
         }
         else
         {
-            _airTime += Time.deltaTime;
-            _JumpAmount -= gravity * Time.deltaTime;
+            _animator.SetFloat("Forward", move.magnitude);
         }
-
-        var move = moveDirection.normalized * moveSpeed;
-
-        if(_sliding)
-        {
-            move.y = 0;
-            _needRotate = false;
-        }
-
-        var fall = Vector3.up * _JumpAmount;
-        move += fall;
-        moveCharacter(move);
-        updateAnimator(move);
-        fixedPosition();
-    }
-    void updateAnimator(Vector3 move)
-    {
-        _animator.SetFloat("Forward", move.magnitude);
         //避免经过某些不平整地面造成的骨骼动画播放错误
-        if (_airTime > 0.1f)
+        if (_airTime > 0.2f)
         {
             _animator.SetBool("OnGround", false);
         }
@@ -140,12 +126,35 @@ public class MoveController : MonoBehaviour
                 if (raycast(vec, out hitInfo))
                 {
                     _isGrounded = true;
+                    var offset = hitInfo.point.y - transform.position.y;
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
                     return;
                 }
             }
         }
         _isGrounded = false;
     }
+
+    Vector3 checkJump()
+    {
+        if (_isGrounded)
+        {
+            _JumpAmount = 0;
+            _airTime = 0;
+            if (CrossPlatformInputManager.GetButton("Jump"))
+            {
+                _airTime += 0.2f;
+                _JumpAmount += jumpPower;
+            }
+        }
+        else
+        {
+            _airTime += Time.deltaTime;
+            _JumpAmount -= gravity * Time.deltaTime;
+        }
+        return Vector3.up * _JumpAmount;
+    }
+
     //检测一条由角色位置+vec开始,方向向下的线段与碰撞盒的交点,检测距离为groundCheckDistance
     bool raycast(Vector3 vec, out RaycastHit hitInfo)
     {
@@ -157,62 +166,17 @@ public class MoveController : MonoBehaviour
     void checkMoveNormal()
     {
         RaycastHit hitInfo;
-        Vector3 slopeNormal = Vector3.zero;
+        Vector3 slopeNormal = Vector3.up;
         float offset = 0.5f;
         if(Physics.Raycast(transform.position + Vector3.up * offset, Vector3.down, out hitInfo, 0.5f + offset))
         {
             slopeNormal = hitInfo.normal;
         }
-
-        //在空中,不属于下滑的范畴
-        if (slopeNormal == Vector3.zero)
-        {
-            _moveNormal = Vector3.up;
-            _sliding = false;
-            return;
-        }
-
-        //竖直方向与平面法向量夹角小于slopeAngelLimit,忽略下落
-        if (Vector3.Dot(Vector3.up, slopeNormal) / (Vector3.up.magnitude * slopeNormal.magnitude) >= Mathf.Cos(slopeAngelLimit * Mathf.Deg2Rad))
-        {
-            _moveNormal = slopeNormal;
-            _sliding = false;
-        }
-        //竖直方向与平面法向量夹角大于slopeAngelLimit,开始下滑
-        else
-        {
-            _moveNormal = slopeNormal;
-            _sliding = true;
-        }
-
-
-    }
-
-    void OnDrawGizmos()
-    {
-        Vector3 vec;
-        
-        for (int row = -1; row <= 1; row++)
-        {
-            for (int col = -1; col <= 1; col++)
-            {
-                vec = transform.right * row * groundCheckDistance + transform.forward * col * groundCheckDistance;
-                Gizmos.DrawLine(transform.position + vec, transform.position + vec + Vector3.down * groundCheckDistance);
-                             
-            }
-        }
-        Gizmos.DrawLine(transform.position, transform.position + debugMove);
-    }
-
-
-    void rotateCharacter()
-    {
-        transform.Rotate(transform.up, _turnAmount * Time.deltaTime);
+        _moveNormal = slopeNormal;
     }
 
     void moveCharacter(Vector3 move)
     {
-
         if (Vector3.ProjectOnPlane(move, Vector3.up).magnitude > 0 && _needRotate)
         {
             var rotateAngle = Mathf.Atan2(move.z, move.x) * 180 / Mathf.PI;
@@ -325,5 +289,21 @@ public class MoveController : MonoBehaviour
     void OnCollisionEnter(Collision col)
     {
         _externalVelocity = Vector3.zero;
+    }
+
+    void OnDrawGizmos()
+    {
+        Vector3 vec;
+
+        for (int row = -1; row <= 1; row++)
+        {
+            for (int col = -1; col <= 1; col++)
+            {
+                vec = transform.right * row * groundCheckDistance + transform.forward * col * groundCheckDistance;
+                Gizmos.DrawLine(transform.position + vec, transform.position + vec + Vector3.down * groundCheckDistance);
+
+            }
+        }
+        Gizmos.DrawLine(transform.position, transform.position + debugMove);
     }
 }
