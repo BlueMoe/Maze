@@ -12,7 +12,7 @@ public class BahamutTreasure : MonoBehaviour {
     void Start () {
         _treasureManager = transform.parent.GetComponent<TreasureManager>();
     }
-	
+	  
 	// Update is called once per frame
 	void Update () {
         transform.Rotate(Vector3.up * Time.deltaTime * _rotateSpeed);
