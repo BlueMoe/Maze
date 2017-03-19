@@ -17,9 +17,6 @@ public class CameraController : MonoBehaviour {
     private Vector3 _direction;
 	// Use this for initialization
 	void Start () {
-        resetAngel();
-        transform.position = getCameraPosition();
-        transform.LookAt(target.transform);
     }
 	
 	// Update is called once per frame
@@ -59,8 +56,7 @@ public class CameraController : MonoBehaviour {
         _phi = Mathf.Clamp(_phi, -89, 89);
         if(Input.GetMouseButton(1))
         {
-            _theta = 180;
-            _phi = 10;
+            resetAngel();
         }
 
         transform.position = getCameraPosition();
@@ -99,13 +95,17 @@ public class CameraController : MonoBehaviour {
     public void resetAngel()
     {
         var targetForward = target.transform.parent.transform.forward;
-        _theta = Mathf.Acos(Vector3.Dot(Vector3.forward, targetForward) /(targetForward.magnitude*Vector3.forward.magnitude)) * 180 / Mathf.PI;
-        _theta = _theta - 90;
+        _theta = Vector3.Angle(Vector3.right, targetForward);
+        if(Vector3.Dot(Vector3.forward, targetForward) > 0.001f)
+        {
+            _theta = 360 - _theta;
+        }
+        _theta = 180 - _theta;       
         _phi = 10;
     }
 
     void OnDrawGizmos()
     {
-        Gizmos.DrawLine(target.transform.position, _direction);
+
     }
 }
