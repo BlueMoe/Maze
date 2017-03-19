@@ -90,6 +90,8 @@ public class SphereMove : MonoBehaviour {
     void lockPosition()
     {
         _rigidBody.constraints = RigidbodyConstraints.FreezeAll;
+        _rigidBody.velocity = Vector3.zero;
+        _rigidBody.angularVelocity = Vector3.zero;
     }
     void unLockPosition()
     {
