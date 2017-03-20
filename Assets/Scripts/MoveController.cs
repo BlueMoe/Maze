@@ -205,7 +205,7 @@ public class MoveController : MonoBehaviour
     //对角色的坐标进行补正,避免穿墙
     void fixedPosition()
     {
-        fixedPositionBySphere(transform.position + transform.up * 0.3f, _radius);
+        fixedPositionBySphere(transform.position + transform.up * 0.15f, _radius/2);
         fixedPositionBySphere(transform.position + transform.up * 0.6f, _radius);
         fixedPositionBySphere(transform.position + transform.up * 0.9f, _radius);
     }
