@@ -10,10 +10,12 @@ public class UpdateMpBarUI : MonoBehaviour {
     private Color _mpBarColor;
     private Color _mpBarColorInCD = new Color(1, 0, 0);
     private UISlider _mpBar;
+    private UILabel _mpValue;
     // Use this for initialization
     void Start () {
         _teleportation = Ambra.GetComponent<Teleportation>();
-        _mpBar = GetComponent<UISlider>();
+        _mpBar = transform.Find("mpBarBoard/mpBar").GetComponent<UISlider>();
+        _mpValue = transform.Find("mpBarBoard/mpValue").GetComponent<UILabel>();
         _mpBarColor = _mpBar.foregroundWidget.color;
 	}
 	
@@ -29,5 +31,6 @@ public class UpdateMpBarUI : MonoBehaviour {
         {
             _mpBar.foregroundWidget.color = _mpBarColor;
         }
+        _mpValue.text = Mathf.FloorToInt(_teleportation.getMp()).ToString();
     }
 }
