@@ -10,13 +10,14 @@ public class CameraController : MonoBehaviour {
     public GameObject target;
     public float cameraRotateSpeed = 30;
     public float cameraMoveSpeed = 3;
-    private float _distance = 3;
+    private float _distance = 2;
     private float _theta;
     private float _phi;
     private Vector3 _pos;
     private Vector3 _direction;
 	// Use this for initialization
 	void Start () {
+        resetAngel();
     }
 	
 	// Update is called once per frame

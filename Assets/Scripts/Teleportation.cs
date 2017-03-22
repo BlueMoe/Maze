@@ -11,10 +11,10 @@ public class Teleportation : MonoBehaviour
     public float _mpMax = 100;
 
     private bool _isTeleportCountDown = false;
-    private float _teleportCDTime = 8;
+    private float _teleportCDTime = 10;
     private float _mp;
     private float _mpCastSpeed = 50;
-    private float _mpRegenSpeed = 20;
+    private float _mpRegenTime = 10;
     private float _normalSpeed;
     private float _fastRatio = 1.2f;
     private bool _isFastMode = false;
@@ -100,7 +100,7 @@ public class Teleportation : MonoBehaviour
 
     void mpRegenInNormalTime()
     {
-        _mp += _mpRegenSpeed * Time.deltaTime;
+        _mp += _mpMax / _mpRegenTime * Time.deltaTime;
         _mp = Mathf.Clamp(_mp, 0, _mpMax);
     }
 
