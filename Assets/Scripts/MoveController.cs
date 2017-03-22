@@ -72,8 +72,9 @@ public class MoveController : MonoBehaviour
 
         float v = CrossPlatformInputManager.GetAxis("Vertical");
         float h = CrossPlatformInputManager.GetAxis("Horizontal");
+
         var moveDirection = fixedMoveDirection(v,h);
-        var move = moveDirection.normalized * moveSpeed;
+        var move = moveDirection.normalized * moveSpeed * Mathf.Clamp( Mathf.Sqrt(v*v + h*h),0,1);
         move += checkJump();
 
         moveCharacter(move);
