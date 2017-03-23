@@ -25,8 +25,9 @@ public class TipsAction : MonoBehaviour {
         _tipsPic2 = transform.Find("TipsPic2").GetComponent<UISprite>();
         _tipsLabel1 = transform.Find("TipsLabel1").GetComponent<UILabel>();
         _tipsLabel2 = transform.Find("TipsLabel2").GetComponent<UILabel>();
-        _tipsStrings = File.ReadAllLines("Assets/Configs/tipsString.ini");
-        _tipsPicturePath = File.ReadAllLines("Assets/Configs/tipsTexture.ini");
+        string path = Application.dataPath;
+        _tipsStrings = File.ReadAllLines(path + "/StreamingAssets/tipsString.ini");
+        _tipsPicturePath = File.ReadAllLines(path + "/StreamingAssets/tipsTexture.ini");
         nextTips();
 
 
