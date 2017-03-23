@@ -74,7 +74,7 @@ public class MoveController : MonoBehaviour
         float h = CrossPlatformInputManager.GetAxis("Horizontal");
 
         var moveDirection = fixedMoveDirection(v,h);
-        var move = moveDirection.normalized * moveSpeed * Mathf.Clamp( Mathf.Sqrt(v*v + h*h),0,1);
+        var move = moveDirection.normalized * moveSpeed * Mathf.Clamp( Mathf.Sqrt(v*v + h*h),0,1); //处理手柄控制时轻推摇杆移动速度也很快的问题
         move += checkJump();
 
         moveCharacter(move);
@@ -123,7 +123,7 @@ public class MoveController : MonoBehaviour
         {
             for (int col = -1; col <= 1; col++)
             {
-                vec = transform.right * row * groundCheckDistance + transform.forward * col * groundCheckDistance;
+                vec = transform.right * row * groundCheckDistance * 2 + transform.forward * col * groundCheckDistance * 2;
                 if (raycast(vec, out hitInfo))
                 {
                     _isGrounded = true;
