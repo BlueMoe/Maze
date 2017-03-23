@@ -18,7 +18,7 @@ public class TipsAction : MonoBehaviour {
     private string[] _tipsStrings;
     private string[] _tipsPicturePath;
     private int _tipsIndex = 0;
-    private int sign = -1;
+    private int _sign = -1;
 	void Start () {
         _tipsIcon = transform.Find("TipsIcon").GetComponent<UISprite>();
         _tipsPic1 = transform.Find("TipsPic1").GetComponent<UISprite>();
@@ -35,7 +35,7 @@ public class TipsAction : MonoBehaviour {
 	
 	void Update () {
         //Icon相关
-        _tipsIcon.fillAmount += sign * (1.0f / fillChangeTime) * Time.deltaTime;
+        _tipsIcon.fillAmount += _sign * (1.0f / fillChangeTime) * Time.deltaTime;
 
         if(CrossPlatformInputManager.GetButtonUp("NextTips"))
         {
@@ -47,7 +47,7 @@ public class TipsAction : MonoBehaviour {
     {
         yield return new WaitForSeconds(fillChangeTime);
         _tipsIcon.invert = !_tipsIcon.invert;
-        sign = -sign;
+        _sign = -_sign;
         StartCoroutine(InvertFill());
     }
 
