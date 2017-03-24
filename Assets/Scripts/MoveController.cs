@@ -207,8 +207,8 @@ public class MoveController : MonoBehaviour
     void fixedPosition()
     {
         fixedPositionBySphere(transform.position + transform.up * 0.15f, _radius/2);
-        fixedPositionBySphere(transform.position + transform.up * 0.6f, _radius);
-        fixedPositionBySphere(transform.position + transform.up * 0.9f, _radius);
+        fixedPositionBySphere(transform.position + transform.up * 0.6f, _radius + 0.2f);
+        fixedPositionBySphere(transform.position + transform.up * 0.9f, _radius + 0.2f);
     }
 
     void fixedPositionBySphere(Vector3 pos, float radius)

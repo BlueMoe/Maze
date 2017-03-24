@@ -55,10 +55,6 @@ public class CameraController : MonoBehaviour {
         _theta -= x;
         _phi -= y;
         _phi = Mathf.Clamp(_phi, -89, 89);
-        if(Input.GetMouseButton(1))
-        {
-            resetAngel();
-        }
 
         transform.position = getCameraPosition();
         transform.LookAt(target.transform);
