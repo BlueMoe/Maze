@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FollowAmbraPointLight : MonoBehaviour {
 
-    public GameObject Ambra;
+    public GameObject target;
     public Vector3 relativePosition;
 	// Use this for initialization
 	void Start () {
@@ -14,7 +14,8 @@ public class FollowAmbraPointLight : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         
-        var pos = Camera.main.transform.position;
+        var pos = target.transform.position;
+        pos += relativePosition;
         transform.position = pos;
 	}
 }

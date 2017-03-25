@@ -11,6 +11,8 @@ public class spotLightFollowCamera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.rotation = Camera.main.transform.rotation;
+        var eulerAngels = Camera.main.transform.eulerAngles;
+        eulerAngels.x = 20;
+        transform.eulerAngles = eulerAngels;
 	}
 }
