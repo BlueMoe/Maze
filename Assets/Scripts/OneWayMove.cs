@@ -10,14 +10,21 @@ public class OneWayMove : MonoBehaviour
     public Vector3 _topPosition = new Vector3(0, 0, 0);
     public GameObject atTopResetButton;
     public GameObject atBottomResetButton;
-    private bool _ismoving = false;
     public bool _atBottom = false;
+    public bool haveSound = false;
+
+    private bool _ismoving = false;
     private Transform _targetParent;
     private Vector3 _targetSourceScale;
+
+    private AudioSource _audio;
     // Use this for initialization
     void Start()
     {
-
+        if(haveSound)
+        {
+            _audio = GetComponent<AudioSource>();
+        }
     }
 
     // Update is called once per frame
@@ -27,7 +34,6 @@ public class OneWayMove : MonoBehaviour
         {
             return;
         }
-
         if (_atBottom)
         {
             moveToTop();
@@ -94,5 +100,11 @@ public class OneWayMove : MonoBehaviour
     void DoActivateTrigger()
     {
         _ismoving = true;
+        Debug.Log("11");
+        if (haveSound && !_audio.isPlaying)
+        {
+            Debug.Log("22");
+            _audio.Play();
+        }
     }
 }

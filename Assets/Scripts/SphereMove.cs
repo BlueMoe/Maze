@@ -19,14 +19,16 @@ public class SphereMove : MonoBehaviour {
     private bool _back = false;
     private Vector3 _rotationAxis;
     private Vector3 _move;
-
     private Vector3 _v = Vector3.zero;
     private Vector3 _angularv = Vector3.zero;
+    private AudioSource _audio;
     // Use this for initialization
     void Start () {
         _rigidBody = GetComponent<Rigidbody>();
         _move = targetPosition - originPosition;
         _rotationAxis = Vector3.Cross((targetPosition - originPosition), Vector3.up);
+        _audio = GetComponent<AudioSource>();
+        
     }
 	
 	// Update is called once per frame
@@ -92,6 +94,7 @@ public class SphereMove : MonoBehaviour {
         _rigidBody.constraints = RigidbodyConstraints.FreezeAll;
         _angularv = Vector3.zero;
         _v = Vector3.zero;
+        _audio.Stop();
     }
     void unLockPosition()
     {
@@ -120,5 +123,6 @@ public class SphereMove : MonoBehaviour {
         {
             _rigidBody.constraints = _rigidBody.constraints | RigidbodyConstraints.FreezeRotationZ;
         }
+        _audio.Play();
     }
 }

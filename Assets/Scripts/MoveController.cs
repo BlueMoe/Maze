@@ -13,6 +13,11 @@ public class MoveController : MonoBehaviour
     public float gravity = 20.0f;
     public float slopeAngelLimit = 80;
 
+    public AudioClip stone;
+    public AudioClip iron;
+    public Material stoneMaterial;
+    public Material ironMaterial;
+
     private Animator _animator;
     private ActionModeController _actionModeController;
     private ActionModeController.ActionMode _myMode;
@@ -123,7 +128,7 @@ public class MoveController : MonoBehaviour
         {
             for (int col = -1; col <= 1; col++)
             {
-                vec = transform.right * row * groundCheckDistance * 2 + transform.forward * col * groundCheckDistance * 2;
+                vec = transform.right * row * groundCheckDistance * 1.5f + transform.forward * col * groundCheckDistance * 1.5f;
                 if (raycast(vec, out hitInfo))
                 {
                     _isGrounded = true;

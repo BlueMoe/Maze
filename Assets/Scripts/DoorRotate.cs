@@ -8,16 +8,19 @@ public class DoorRotate : MonoBehaviour {
     public float endAngel;
     public float rotateTime;
     public bool isRotateLoop;
+    public bool needHitSound;
 
     private float _rotateAngel;
     private float _rotateSpeed;
     private Vector3 _originEulerAngles;
     private bool _isRotating;
+    private AudioSource _audioSource;
     // Use this for initialization
     void Start () {
         _rotateAngel = endAngel - startAngel;
         _rotateSpeed = _rotateAngel / rotateTime;
         _originEulerAngles = transform.eulerAngles;
+        _audioSource = GetComponent<AudioSource>();
     }
 	
 	// Update is called once per frame
@@ -36,6 +39,7 @@ public class DoorRotate : MonoBehaviour {
 
     public void RotateStart()
     {
+        _audioSource.Play();
         _isRotating = true;
     }
 
@@ -50,5 +54,4 @@ public class DoorRotate : MonoBehaviour {
         _isRotating = false;
         transform.eulerAngles = new Vector3(_originEulerAngles.x, _originEulerAngles.y, endAngel);
     }
-
 }

@@ -8,26 +8,21 @@ public class ChipFadeOut : MonoBehaviour {
     private Color _color;
     private float _stopTime;
     private Vector3 _pos;
+    private Rigidbody _rigidbody;
 	// Use this for initialization
 	void Start () {
         _renderer = GetComponent<Renderer>();
         _color = _renderer.material.color;
+        _rigidbody = GetComponent<Rigidbody>();
+        GetComponent<AudioSource>().Play();
 
-        Destroy(gameObject, 120);
+        Destroy(gameObject, 10);
 	}
 
     void Update()
     {
+        if(_rigidbody.velocity.magnitude >1)
+        { Destroy(GetComponent<BoxCollider>()); }
         
-        if(_pos == transform.position)
-        {
-            _stopTime += Time.deltaTime;
-        }
-        _pos = transform.position;
-        if(_stopTime > 0.5f)
-        {
-            Destroy(GetComponent<BoxCollider>());
-            Destroy(GetComponent<Rigidbody>());
-        }
     }
 }

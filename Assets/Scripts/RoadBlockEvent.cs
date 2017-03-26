@@ -33,6 +33,11 @@ public class RoadBlockEvent : MonoBehaviour {
 
     void roadBlockBreak()
     {
+        var audio = GetComponent<AudioSource>();
+        if(audio)
+        {
+            audio.Play();
+        }
         StartCoroutine(zoomOutAndBreak());
     }
 
