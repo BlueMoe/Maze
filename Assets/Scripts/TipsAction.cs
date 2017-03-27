@@ -56,7 +56,8 @@ public class TipsAction : MonoBehaviour {
     {
         if (_tipsIndex >= _tipsPicturePath.Length)
         {
-            Ambra.SetActive(true);
+            Ambra.GetComponent<MoveController>().enabled = true;
+            Ambra.GetComponent<Teleportation>().enabled = true;
             statusBoard.SetActive(true);
             Destroy(gameObject);
 

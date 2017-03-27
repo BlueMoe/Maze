@@ -123,7 +123,7 @@ public class MoveController : MonoBehaviour
         {
             for (int col = -1; col <= 1; col++)
             {
-                vec = transform.right * row * groundCheckDistance * 1.5f + transform.forward * col * groundCheckDistance * 1.5f;
+                vec = transform.right * row * groundCheckDistance*1.2f + transform.forward * col * groundCheckDistance * 1.2f;
                 if (raycast(vec, out hitInfo))
                 {
                     _isGrounded = true;
