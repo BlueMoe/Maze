@@ -92,7 +92,7 @@ public class Teleportation : MonoBehaviour
         phantom.GetComponent<Animator>().Stop();
         //设置幻影模式,移除不必要组件
         phantom.GetComponent<ActionModeController>().changeMode(ActionModeController.ActionMode.PHANTOMMODE);
-        phantom.transform.parent = Ambra.transform.parent;
+        phantom.transform.parent = null;
         phantom.transform.localScale = Ambra.transform.localScale;
         Destroy(phantom.transform.FindChild("flashlight").gameObject);
         //0.2秒后移除幻影
