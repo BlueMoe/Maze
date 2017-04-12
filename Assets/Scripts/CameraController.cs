@@ -10,6 +10,7 @@ public class CameraController : MonoBehaviour {
     public GameObject target;
     public float cameraRotateSpeed = 30;
     public float cameraMoveSpeed = 3;
+    private bool _2DMode = false;
     private float _distance = 5;
     private float _theta;
     private float _phi;
@@ -22,42 +23,14 @@ public class CameraController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-        if(Input.GetAxis("Mouse ScrollWheel") > 0)
+        if(_2DMode)
         {
-            _distance -= 0.1f * cameraMoveSpeed;
-            if (_distance < MIN_DISTANCE) _distance = MIN_DISTANCE;
-        }
-        else if (Input.GetAxis("Mouse ScrollWheel") < 0)
-        {
-            _distance += 0.1f * cameraMoveSpeed;
-            if (_distance > MAX_DISTANCE) _distance = MAX_DISTANCE;
-        }
-
-        float x;
-        float y;
-        if(Input.GetMouseButton(0))
-        {
-            x = CrossPlatformInputManager.GetAxis("MouseRightHorizontal");
-            y = CrossPlatformInputManager.GetAxis("MouseRightVertical");
-            x *= cameraRotateSpeed / 3;
-            y *= cameraRotateSpeed / 3;
+            updateCamera2D();
         }
         else
         {
-            
-
-            x = CrossPlatformInputManager.GetAxis("RightHorizontal");
-            y = CrossPlatformInputManager.GetAxis("RightVertical");
-            x *= cameraRotateSpeed;
-            y *= -cameraRotateSpeed;
+            updateCamera3D();
         }
-        _theta -= x;
-        _phi -= y;
-        _phi = Mathf.Clamp(_phi, -89, 89);
-
-        transform.position = getCameraPosition();
-        transform.LookAt(target.transform);
     }
 
     Vector3 caclCameraPosition()
@@ -68,6 +41,15 @@ public class CameraController : MonoBehaviour {
         var pos = target.transform.position;
         return pos + new Vector3(x, y, z);
         //return target.transform.TransformPoint(new Vector3(x, y, z));
+    }
+
+    Vector3 caclCameraPosition2DMode()
+    {
+        float x = 2*MAX_DISTANCE * Mathf.Cos(Mathf.PI / 180 * 10) * Mathf.Cos(Mathf.PI / 180 * 90);
+        float y = 2*MAX_DISTANCE * Mathf.Sin(Mathf.PI / 180 * 10);
+        float z = 2*MAX_DISTANCE * Mathf.Cos(Mathf.PI / 180 * 10) * Mathf.Sin(Mathf.PI / 180 * 90);
+        var pos = target.transform.position;
+        return pos + new Vector3(x, y, z);
     }
 
     //防止穿墙
@@ -89,6 +71,51 @@ public class CameraController : MonoBehaviour {
         return pos;
     }
 
+    void updateCamera3D()
+    {
+        if (Input.GetAxis("Mouse ScrollWheel") > 0)
+        {
+            _distance -= 0.1f * cameraMoveSpeed;
+            if (_distance < MIN_DISTANCE) _distance = MIN_DISTANCE;
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0)
+        {
+            _distance += 0.1f * cameraMoveSpeed;
+            if (_distance > MAX_DISTANCE) _distance = MAX_DISTANCE;
+        }
+
+        float x;
+        float y;
+        if (Input.GetMouseButton(0))
+        {
+            x = CrossPlatformInputManager.GetAxis("MouseRightHorizontal");
+            y = CrossPlatformInputManager.GetAxis("MouseRightVertical");
+            x *= cameraRotateSpeed / 3;
+            y *= cameraRotateSpeed / 3;
+        }
+        else
+        {
+
+
+            x = CrossPlatformInputManager.GetAxis("RightHorizontal");
+            y = CrossPlatformInputManager.GetAxis("RightVertical");
+            x *= cameraRotateSpeed;
+            y *= -cameraRotateSpeed;
+        }
+        _theta -= x;
+        _phi -= y;
+        _phi = Mathf.Clamp(_phi, -89, 89);
+
+        transform.position = getCameraPosition();
+        transform.LookAt(target.transform);
+    }
+
+    void updateCamera2D()
+    {
+        transform.position =  caclCameraPosition2DMode();
+        transform.LookAt(target.transform);
+    }
+
     public void resetAngel()
     {
         var targetForward = target.transform.parent.transform.forward;
@@ -99,6 +126,11 @@ public class CameraController : MonoBehaviour {
         }
         _theta = 180 - _theta;       
         _phi = 10;
+    }
+
+    public void set2DMode(bool flag)
+    {
+        _2DMode = flag;
     }
 
     void OnDrawGizmos()
