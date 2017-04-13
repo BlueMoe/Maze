@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CameraChangeTrigger : MonoBehaviour {
 
-    public bool changeTo2DMode = false;
-
 	// Use this for initialization
 	void Start () {
 		
@@ -20,6 +18,12 @@ public class CameraChangeTrigger : MonoBehaviour {
     {
         if (other.gameObject.GetComponent<ActionModeController>() == null) return;
 
-        Camera.main.GetComponent<CameraController>().set2DMode(changeTo2DMode);
+        Camera.main.GetComponent<CameraController>().set2DMode(true);
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.GetComponent<ActionModeController>() == null) return;
+
+        Camera.main.GetComponent<CameraController>().set2DMode(false);
     }
 }

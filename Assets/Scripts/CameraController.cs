@@ -6,6 +6,11 @@ public class CameraController : MonoBehaviour {
 
     const float MAX_DISTANCE = 10;
     const float MIN_DISTANCE = 1;
+    const float THETA_2D = 90;
+    const float PHI_2D = 10;
+    float x_2D = 2 * MAX_DISTANCE * Mathf.Cos(Mathf.PI / 180 * PHI_2D) * Mathf.Cos(Mathf.PI / 180 * THETA_2D);
+    float y_2D = 2 * MAX_DISTANCE * Mathf.Sin(Mathf.PI / 180 * PHI_2D);
+    float z_2D = 115;
 
     public GameObject target;
     public float cameraRotateSpeed = 30;
@@ -45,11 +50,11 @@ public class CameraController : MonoBehaviour {
 
     Vector3 caclCameraPosition2DMode()
     {
-        float x = 2*MAX_DISTANCE * Mathf.Cos(Mathf.PI / 180 * 10) * Mathf.Cos(Mathf.PI / 180 * 90);
-        float y = 2*MAX_DISTANCE * Mathf.Sin(Mathf.PI / 180 * 10);
-        float z = 2*MAX_DISTANCE * Mathf.Cos(Mathf.PI / 180 * 10) * Mathf.Sin(Mathf.PI / 180 * 90);
         var pos = target.transform.position;
-        return pos + new Vector3(x, y, z);
+        pos.x += x_2D;
+        pos.y += y_2D;
+        pos.z = z_2D;
+        return pos;
     }
 
     //防止穿墙
@@ -131,6 +136,11 @@ public class CameraController : MonoBehaviour {
     public void set2DMode(bool flag)
     {
         _2DMode = flag;
+        if(_2DMode)
+        {
+            _theta = THETA_2D;
+            _phi = PHI_2D;
+        }
     }
 
     void OnDrawGizmos()
