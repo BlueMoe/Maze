@@ -47,7 +47,7 @@
 				o.Alpha = c.a;
 				if (c.r - c.b > 0.05 && c.r - c.g > 0.05)
 				{
-					o.Emission = _TopColor.rgb*(IN.vertPos.y)*0.5 + _TopColor.rgb*(IN.vertPos.y)*0.5;
+					o.Emission = _TopColor.rgb*(IN.vertPos.y);
 				}
 				//clamp
 			}
