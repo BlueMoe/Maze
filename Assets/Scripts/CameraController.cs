@@ -15,7 +15,7 @@ public class CameraController : MonoBehaviour {
     public GameObject target;
     public float cameraRotateSpeed = 30;
     public float cameraMoveSpeed = 3;
-    private bool _2DMode = false;
+    private int _2DModeCount = 0;
     private float _distance = 5;
     private float _theta;
     private float _phi;
@@ -28,7 +28,7 @@ public class CameraController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(_2DMode)
+        if(_2DModeCount > 0)
         {
             updateCamera2D();
         }
@@ -135,8 +135,16 @@ public class CameraController : MonoBehaviour {
 
     public void set2DMode(bool flag)
     {
-        _2DMode = flag;
-        if(_2DMode)
+        if(flag)
+        {
+            _2DModeCount += 1;
+        }
+        else
+        {
+            _2DModeCount -= 1;
+        }
+
+        if(_2DModeCount > 0)
         {
             _theta = THETA_2D;
             _phi = PHI_2D;

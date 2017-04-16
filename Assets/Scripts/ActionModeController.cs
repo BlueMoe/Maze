@@ -13,6 +13,7 @@ public class ActionModeController : MonoBehaviour {
     };
 
     public GameObject Ambra;
+    public bool startFromBeginStage = true;
 
     private ActionMode _myMode = ActionMode.NONE;
     private Rigidbody _rigidBody;
@@ -27,6 +28,10 @@ public class ActionModeController : MonoBehaviour {
         
 	// Use this for initialization
 	void Start () {
+        if(startFromBeginStage)
+        {
+            Ambra.transform.position = new Vector3(56, 25, 6);
+        }
 	}
 	
 	// Update is called once per frame
