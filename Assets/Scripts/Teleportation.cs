@@ -85,7 +85,7 @@ public class Teleportation : MonoBehaviour
     void createPhantom()
     {
         //实例化幻影
-        GameObject phantom = Instantiate(Ambra, transform.position, transform.rotation) as GameObject;
+        GameObject phantom = Instantiate(Ambra, Ambra.transform.position, Ambra.transform.rotation) as GameObject;
         //设置幻影材质
         phantom.GetComponentInChildren<Renderer>().material = phantomMaterial;
         //停止幻影的动作
